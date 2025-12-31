@@ -5,7 +5,7 @@ import { Commande, CommandeStatus } from './entities/commande.entity';
 import { CreateCommandeDto } from './dto/create-commande.dto';
 import { UpdateCommandeDto } from './dto/update-commande.dto';
 import { FilterCommandesDto } from './dto/filter-commandes.dto';
-import { Commerçant } from '../commerçants/entities/commerçant.entity';
+import { Commerceant } from '../commerceants/entities/commerceant.entity';
 import { Client } from '../clients/entities/client.entity';
 
 @Injectable()
@@ -13,18 +13,18 @@ export class CommandesService {
   constructor(
     @InjectRepository(Commande)
     private readonly commandeRepository: Repository<Commande>,
-    @InjectRepository(Commerçant)
-    private readonly commerçantRepository: Repository<Commerçant>,
+    @InjectRepository(Commerceant)
+    private readonly commerceantRepository: Repository<Commerceant>,
     @InjectRepository(Client)
     private readonly clientRepository: Repository<Client>,
   ) {}
 
   async create(dto: CreateCommandeDto): Promise<Commande> {
-    const commerçant = await this.commerçantRepository.findOne({
-      where: { id: dto.commerçantId },
+    const commerceant = await this.commerceantRepository.findOne({
+      where: { id: dto.commerceantId },
     });
-    if (!commerçant) {
-      throw new NotFoundException('Commerçant not found');
+    if (!commerceant) {
+      throw new NotFoundException('Commerceant not found');
     }
 
     const client = await this.clientRepository.findOne({
@@ -39,7 +39,7 @@ export class CommandesService {
       dateLivraison: dto.dateLivraison ? new Date(dto.dateLivraison) : null,
       statut: dto.statut || CommandeStatus.PENDING,
       details: dto.details || null,
-      commerçant,
+      commerceant,
       client,
     });
 
@@ -50,10 +50,10 @@ export class CommandesService {
     const query = this.commandeRepository
       .createQueryBuilder('commande')
       .leftJoinAndSelect('commande.client', 'client')
-      .leftJoinAndSelect('commande.commerçant', 'commerçant')
+      .leftJoinAndSelect('commande.commerceant', 'commerceant')
       .leftJoinAndSelect('commande.rappelCommandes', 'rappelCommandes')
-      .where('commerçant.id = :commerçantId', {
-        commerçantId: filter.commerçantId,
+      .where('commerceant.id = :commerceantId', {
+        commerceantId: filter.commerceantId,
       })
       .orderBy('commande.createdAt', 'DESC');
 
@@ -67,7 +67,7 @@ export class CommandesService {
   async findOne(id: string): Promise<Commande> {
     const commande = await this.commandeRepository.findOne({
       where: { id },
-      relations: ['client', 'commerçant', 'rappelCommandes'],
+      relations: ['client', 'commerceant', 'rappelCommandes'],
     });
     if (!commande) {
       throw new NotFoundException('Commande not found');

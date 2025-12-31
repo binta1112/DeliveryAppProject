@@ -3,7 +3,7 @@ import { CommandeStatus } from '../entities/commande.entity';
 
 export class FilterCommandesDto {
   @IsUUID()
-  commerçantId: string; //on filtre toujours par commerçant connecté
+  commerceantId: string; //on filtre toujours par commerçant connecté
 
   @IsOptional()
   @IsEnum(CommandeStatus)

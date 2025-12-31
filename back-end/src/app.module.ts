@@ -7,6 +7,11 @@ import { ClientsModule } from './clients/clients.module';
 import { RappelCommandesModule } from './rappel_commandes/rappel_commandes.module';
 import { UsersModule } from './users/users.module';
 import { CommerceantsModule } from './commerceants/commerceants.module';
+import { Commande } from './commandes/entities/commande.entity'
+import { RappelCommande } from './rappel_commandes/entities/rappel-commande.entity';
+import { Client } from './clients/entities/client.entity';
+import { Commerceant } from './commerceants/entities/commerceant.entity';
+import { User } from './users/entities/user.entity';
 
 @Module({
   imports: [
@@ -19,8 +24,8 @@ import { CommerceantsModule } from './commerceants/commerceants.module';
       database: 'delivery_app',
       autoLoadEntities: true, //charge toutes les entités automatiquement
       synchronize: true,      //en dev seulement! génère le schéma auto
+      entities: [Commande, RappelCommande, Client, Commerceant, User],
     }),
-
     UsersModule,
     ClientsModule,
     CommandesModule,

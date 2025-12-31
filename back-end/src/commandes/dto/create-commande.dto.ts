@@ -3,7 +3,7 @@ import { CommandeStatus } from '../entities/commande.entity';
 
 export class CreateCommandeDto {
   @IsUUID()
-  commerçantId: string;
+  commerceantId: string;
 
   @IsUUID()
   clientId: string;

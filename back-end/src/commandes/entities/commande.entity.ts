@@ -1,5 +1,5 @@
 import { Column, CreateDateColumn, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn} from 'typeorm';
-import { Commerçant } from '../../commerçants/entities/commerçant.entity';
+import { Commerceant } from '../../commerceants/entities/commerceant.entity';
 import { Client } from '../../clients/entities/client.entity';
 import { RappelCommande } from '../../rappel_commandes/entities/rappel-commande.entity';
 
@@ -35,10 +35,10 @@ export class Commande {
   @Column({ type: 'text', nullable: true })
   details: string | null;
 
-  @ManyToOne(() => Commerçant, (commerçant) => commerçant.commandes, {
+  @ManyToOne(() => Commerceant, (commerceant) => commerceant.commandes, {
     eager: true,
   })
-  commerçant: Commerçant;
+  commerceant: Commerceant;
 
   @ManyToOne(() => Client, (client) => client.commandes, { eager: true })
   client: Client;

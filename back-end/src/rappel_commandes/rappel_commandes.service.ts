@@ -40,7 +40,7 @@ export class RappelCommandesService {
         scheduledAt: LessThanOrEqual(now),
         isRead: false,
       },
-      relations: ['commande', 'commande.commerçant'],
+      relations: ['commande', 'commande.commerceant'],
     });
   }
 
