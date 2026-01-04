@@ -11,7 +11,7 @@ import { Commande } from './commandes/entities/commande.entity'
 import { RappelCommande } from './rappel_commandes/entities/rappel-commande.entity';
 import { Client } from './clients/entities/client.entity';
 import { Commerceant } from './commerceants/entities/commerceant.entity';
-import { User } from './users/entities/user.entity';
+
 
 @Module({
   imports: [
@@ -24,7 +24,7 @@ import { User } from './users/entities/user.entity';
       database: 'delivery_app',
       autoLoadEntities: true, //charge toutes les entités automatiquement
       synchronize: true,      //en dev seulement! génère le schéma auto
-      entities: [Commande, RappelCommande, Client, Commerceant, User],
+      entities: [Commande, RappelCommande, Client, Commerceant],
     }),
     UsersModule,
     ClientsModule,

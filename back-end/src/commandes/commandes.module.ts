@@ -4,7 +4,7 @@ import { Commande } from './entities/commande.entity';
 import { CommandesService } from './commandes.service';
 import { CommandesController } from './commandes.controller';
 import { Client } from '../clients/entities/client.entity';
-
+import { Commerceant } from '../commerceants/entities/commerceant.entity';
 @Module({
   imports: [TypeOrmModule.forFeature([Commande, Commerceant, Client])],
   controllers: [CommandesController],
