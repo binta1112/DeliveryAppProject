@@ -1,7 +1,12 @@
-import WelcomeScreen2 from './src/screens/quick_start/welcome2';
+import React from 'react';
+import { Provider } from 'react-redux';
+import { store } from './src/redux/store';
+import AppNavigator from './src/navigation/AppNavigator';
 
 export default function App() {
   return (
-    <WelcomeScreen2/>
+    <Provider store={store}>
+      <AppNavigator />
+    </Provider>
   );
 }
