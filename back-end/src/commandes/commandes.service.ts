@@ -5,42 +5,35 @@ import { Commande, CommandeStatus } from './entities/commande.entity';
 import { CreateCommandeDto } from './dto/create-commande.dto';
 import { UpdateCommandeDto } from './dto/update-commande.dto';
 import { FilterCommandesDto } from './dto/filter-commandes.dto';
-import { Commerceant } from '../commerceants/entities/commerceant.entity';
 import { Client } from '../clients/entities/client.entity';
+import { RappelCommande } from 'src/rappel_commandes/entities/rappel-commande.entity';
 
 @Injectable()
 export class CommandesService {
   constructor(
     @InjectRepository(Commande)
     private readonly commandeRepository: Repository<Commande>,
-    @InjectRepository(Commerceant)
-    private readonly commerceantRepository: Repository<Commerceant>,
-    @InjectRepository(Client)
-    private readonly clientRepository: Repository<Client>,
+   @InjectRepository(RappelCommande)
+    private readonly rappelCommandeRepository: Repository<RappelCommande>,
+   /* @InjectRepository(Client)
+    private readonly clientRepository: Repository<Client>,*/
   ) {}
 
   async create(dto: CreateCommandeDto): Promise<Commande> {
-    const commerceant = await this.commerceantRepository.findOne({
-      where: { id: dto.commerceantId },
-    });
-    if (!commerceant) {
-      throw new NotFoundException('Commerceant not found');
-    }
 
-    const client = await this.clientRepository.findOne({
-      where: { id: dto.clientId },
+    /*const client = await this.clientRepository.findOne({
+      where: { id: dto.clientId  },
     });
     if (!client) {
       throw new NotFoundException('Client not found');
-    }
-
+    }*/
+   
     const commande = this.commandeRepository.create({
       addressLivraison: dto.addressLivraison,
       dateLivraison: dto.dateLivraison ? new Date(dto.dateLivraison) : null,
       statut: dto.statut || CommandeStatus.PENDING,
-      details: dto.details || null,
-      commerceant,
-      client,
+      details: dto.details || null,      
+      //client,
     });
 
     return this.commandeRepository.save(commande);

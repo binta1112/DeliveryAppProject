@@ -34,11 +34,7 @@ export class Commande {
   //"bloc-note" : texte libre avec le détail de la commande, notes, etc.
   @Column({ type: 'text', nullable: true })
   details: string | null;
-
-  @ManyToOne(() => Commerceant, (commerceant) => commerceant.commandes, {
-    eager: true,
-  })
-  commerceant: Commerceant;
+  
 
   @ManyToOne(() => Client, (client) => client.commandes, { eager: true })
   client: Client;

@@ -1,6 +1,7 @@
 import { IsNotEmpty, IsString } from 'class-validator';
 
 export class CreateClientDto {
+  sellerId: number;
   @IsString()
   @IsNotEmpty()
   nom: string;

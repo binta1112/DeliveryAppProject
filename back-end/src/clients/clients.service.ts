@@ -4,12 +4,18 @@ import { Repository } from 'typeorm';
 import { Client } from './entities/client.entity';
 import { CreateClientDto } from './dto/create-client.dto';
 import { UpdateClientDto } from './dto/update-client.dto';
+import { UsersService } from 'src/users/users.service';
+import { User } from 'src/users/entity/user.entity';
+import { Commerceant } from 'src/commerceants/entities/commerceant.entity';
+import { Commande } from 'src/commandes/entities/commande.entity';
 
 @Injectable()
 export class ClientsService {
   constructor(
     @InjectRepository(Client)
-    private readonly clientRepo: Repository<Client>,
+    private readonly clientRepo: Repository<Client>,    
+    @InjectRepository(Commande)
+    private readonly commandeRepo: Repository<Commande>,
   ) {}
 
   async create(dto: CreateClientDto): Promise<Client> {

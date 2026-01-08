@@ -12,21 +12,29 @@ import { RappelCommande } from './rappel_commandes/entities/rappel-commande.enti
 import { Client } from './clients/entities/client.entity';
 import { Commerceant } from './commerceants/entities/commerceant.entity';
 
+import { User } from './users/entity/user.entity';
+import { AuthModule } from './auth/auth.module';
+import { LivreurModule } from './livreur/livreur.module';
+import { Livreur } from './livreur/entity/livreur';
+import { LivreurController } from './livreur/livreur.controller';
+
 
 @Module({
   imports: [
     TypeOrmModule.forRoot({
       type: 'postgres',
       host: 'localhost',
-      port: 5432,
+      port: 5433,
       username: 'postgres',
-      password: '1234',
+      password: 'posgres',//'1234',
       database: 'delivery_app',
       autoLoadEntities: true, //charge toutes les entités automatiquement
       synchronize: true,      //en dev seulement! génère le schéma auto
-      entities: [Commande, RappelCommande, Client, Commerceant],
+      entities: [User, Livreur,Client,Commande,RappelCommande,Commerceant],
     }),
-    UsersModule,
+    UsersModule,   
+    LivreurModule,
+    AuthModule,
     ClientsModule,
     CommandesModule,
     RappelCommandesModule,
