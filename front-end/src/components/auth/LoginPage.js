@@ -1,0 +1,141 @@
+import  { useState } from 'react';
+import {
+  View,
+  Text,
+  ScrollView,
+  TouchableOpacity,
+  KeyboardAvoidingView,
+  Platform,
+  Alert,
+} from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
+import useAuth from '../../hooks/useAuth';
+import { validationService } from '../../services/ValidationService';
+import InputField from './InputField';
+import Checkbox from './Checkbox';
+import SubmitButton from './SubmitButton';
+import SocialButton from './SocialButton';
+import Divider from './Divider';
+import { authStyles } from '../../styles/authStyles';
+
+const LoginPage = (props) => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [rememberMe, setRememberMe] = useState(false);
+  const [validationErrors, setValidationErrors] = useState({});
+
+  const { Login, Register, isloading } = useAuth();
+
+  const handleSubmit = async () => {   
+
+    const validation = validationService.validateLoginForm(email, password);
+    setValidationErrors(validation.errors);
+
+    if (!validation.isValid) return;
+
+    try {
+      await Login(email, password);
+      Alert.alert('Success', 'Login successful!');
+      // Navigation ou autre logique après succès
+    } catch (err) {
+      console.error('Login failed:', err);
+    }
+  };
+
+  const handleSocialLogin = (provider) => {
+    Alert.alert('Info', `${provider} login not implemented`);
+  };
+
+  return (
+    <KeyboardAvoidingView
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      style={{ flex: 1 }}
+    >
+      <LinearGradient
+        colors={['#ffbf6d','#ffccbb']}
+        style={authStyles.container}
+      >
+        <ScrollView
+          contentContainerStyle={{ flexGrow: 1, justifyContent: 'center' }}
+          showsVerticalScrollIndicator={false}
+        >
+          <View style={{ width: '100%',  }}>
+            <View style={authStyles.header}>
+              <Text style={authStyles.title}>Log In</Text>
+              <Text style={authStyles.subtitle}>
+                Please sign in to your existing account
+              </Text>
+            </View>
+
+            <View style={authStyles.card}>
+              <InputField
+                label="EMAIL"
+                type="email"
+                placeholder="example@gmail.com"
+                value={email}
+                onChange={setEmail}
+                error={validationErrors.email}
+              />
+
+              <InputField
+                label="PASSWORD"
+                type="password"
+                placeholder="••••••••••"
+                value={password}
+                onChange={setPassword}
+                error={validationErrors.password}
+              />
+              
+
+              <View style={authStyles.rememberRow}>
+                <Checkbox
+                  label="Remember me"
+                  checked={rememberMe}
+                  onChange={(e) => setRememberMe(e.target.checked)}
+                />
+                <TouchableOpacity>
+                  <Text style={authStyles.forgotPassword}>Forgot Password</Text>
+                </TouchableOpacity>
+              </View>
+
+              <SubmitButton loading={isloading} onPress={handleSubmit}>
+                LOG IN
+              </SubmitButton>
+
+              <View style={authStyles.signupContainer}>
+                <Text style={authStyles.signupText}>Don't have an account?</Text>
+                <TouchableOpacity
+                onPress={() => props.navigation.navigate('SignUp')}
+                >
+                  <Text style={authStyles.signupLink}  >SIGN UP</Text>
+                </TouchableOpacity>
+              </View>
+
+              <Divider text="Or" />
+
+              <View style={authStyles.socialContainer}>
+                <SocialButton
+                  icon="f"
+                  type="facebook"
+                  onPress={() => handleSocialLogin('Facebook')}
+                />
+                <SocialButton
+                  icon="X"
+                  type="twitter"
+                  onPress={() => handleSocialLogin('Twitter')}
+                />
+                <SocialButton
+                  icon=""
+                  type="apple"
+                  onPress={() => handleSocialLogin('Apple')}
+                />
+              </View>
+            </View>
+          </View>
+        </ScrollView>
+      </LinearGradient>
+    </KeyboardAvoidingView>
+  );
+};
+
+export default LoginPage;
