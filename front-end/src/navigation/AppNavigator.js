@@ -1,5 +1,4 @@
-import React from 'react';
-import { NavigationContainer } from '@react-navigation/native';
+
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import CommandesListScreen from '../screens/CommandesListScreen';
 import CommandeDetailScreen from '../screens/CommandeDetailScreen';
@@ -25,7 +24,7 @@ const NavActions = ({ navigation }) => (
 );
 
 export const AppNavigator = () => (
-  <NavigationContainer>
+  
     <Stack.Navigator>
       <Stack.Screen
         name="Commandes"
@@ -53,7 +52,7 @@ export const AppNavigator = () => (
         })}
       />
     </Stack.Navigator>
-  </NavigationContainer>
+ 
 );
 
 export default AppNavigator;

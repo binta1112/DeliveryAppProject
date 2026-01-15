@@ -1,7 +1,7 @@
 export class AuthResponseDTO {
     accessToken: string;
     refreshToken: string;
-    userId: string;
+    userId: Number;
     userRole: string;
     userFirstName: string;
     userLastName: string;

@@ -1,10 +1,10 @@
 const validateEmail = (email) => {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z\d]).{8,}$/ ; // Minimum eight characters, at least one letter and one number
   return emailRegex.test(email);
 };
 
 const validatePassword = (password) => {
+  const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z\d]).{8,}$/ ; // Minimum eight characters, at least one letter and one number
   return passwordRegex.test(password);
 };
 
@@ -20,7 +20,7 @@ const validateLoginForm = (email, password) => {
   if (!password) {
     errors.password = 'Password is required';
   } else if (!validatePassword(password)) {
-    errors.password = 'Password must be at leasteight characters, at least one letter and one number';
+    errors.password = 'Password must be at least eight characters, at least one letter and one number';
   }
 
   return {

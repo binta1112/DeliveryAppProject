@@ -19,4 +19,8 @@ export  class User {
     adresse?: string;
     @CreateDateColumn()
     createdAt: Date;
+    @Column({ default: 'seller' })
+    role: 'seller' | 'courier';
+    @Column({ nullable: true })
+    profileImage?: string;
 }

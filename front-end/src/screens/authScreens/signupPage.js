@@ -11,34 +11,42 @@ import {
 import { LinearGradient } from 'expo-linear-gradient';
 import useAuth from '../../hooks/useAuth';
 import { validationService } from '../../services/ValidationService';
-import InputField from './InputField';
-import Checkbox from './Checkbox';
-import SubmitButton from './SubmitButton';
-import SocialButton from './SocialButton';
-import Divider from './Divider';
+import InputField from '../../components/auth/InputField';
+import Checkbox from '../../components/auth/Checkbox';
+import SubmitButton from '../../components/auth/SubmitButton';
+import SocialButton from '../../components/auth/SocialButton';
+import Divider from '../../components/auth/Divider';
 import { authStyles } from '../../styles/authStyles';
 
-const LoginPage = (props) => {
+const SignUpPage = (props) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [rememberMe, setRememberMe] = useState(false);
+  const [fullName, setFullName] = useState('');
+  const [passwordConfirmation, setPasswordConfirmation] = useState('');
+  const [acceptTerms, setAcceptTerms] = useState(false);
   const [validationErrors, setValidationErrors] = useState({});
-
-  const { Login, Register, isloading } = useAuth();
+ 
+  const {  isloading } = useAuth();
 
   const handleSubmit = async () => {   
 
-    const validation = validationService.validateLoginForm(email, password);
-    setValidationErrors(validation.errors);
+   // const validation = validationService.validateRegisterForm(fullName, email, password, passwordConfirmation);
+    //setValidationErrors(validation.errors);
 
-    if (!validation.isValid) return;
-
+   // if (!validation.isValid) return;
+    if (!acceptTerms) {
+      Alert.alert('Error', 'You must accept the Terms & Conditions');
+      return;
+    }
+    
     try {
-      await Login(email, password);
-      Alert.alert('Success', 'Login successful!');
-      // Navigation ou autre logique après succès
+      props.navigation.navigate('RoleSelection', {
+        fullName,
+        email,
+        password,
+      });
     } catch (err) {
-      console.error('Login failed:', err);
+      console.error('Registration failed:', err);
     }
   };
 
@@ -61,13 +69,21 @@ const LoginPage = (props) => {
         >
           <View style={{ width: '100%',  }}>
             <View style={authStyles.header}>
-              <Text style={authStyles.title}>Log In</Text>
-              <Text style={authStyles.subtitle}>
-                Please sign in to your existing account
-              </Text>
+              <Text style={authStyles.title}>Sign Up</Text>
+              <Text style={authStyles.subtitle}>Create a new account</Text>
             </View>
 
+            
+
             <View style={authStyles.card}>
+              <InputField
+                label="Full Name"
+                type="text"
+                placeholder="John Doe"
+                value={fullName}
+                onChange={setFullName}
+                error={validationErrors.fullName}
+              />
               <InputField
                 label="EMAIL"
                 type="email"
@@ -85,29 +101,33 @@ const LoginPage = (props) => {
                 onChange={setPassword}
                 error={validationErrors.password}
               />
-              
+              <InputField
+                label="PASSWORD CONFIRMATION"
+                type="password"
+                placeholder="••••••••••"
+                value={passwordConfirmation}
+                onChange={setPasswordConfirmation}
+                error={validationErrors.passwordConfirmation}
+              />              
 
               <View style={authStyles.rememberRow}>
                 <Checkbox
-                  label="Remember me"
-                  checked={rememberMe}
-                  onChange={(e) => setRememberMe(e.target.checked)}
-                />
-                <TouchableOpacity>
-                  <Text style={authStyles.forgotPassword}>Forgot Password</Text>
-                </TouchableOpacity>
+                  label="Agree to Terms & Conditions"
+                  checked={acceptTerms}
+                  onChange={(e) => setAcceptTerms(e.target.checked)}
+                />               
               </View>
 
               <SubmitButton loading={isloading} onPress={handleSubmit}>
-                LOG IN
+                Next
               </SubmitButton>
 
               <View style={authStyles.signupContainer}>
-                <Text style={authStyles.signupText}>Don't have an account?</Text>
+                <Text style={authStyles.signupText}>Already have an account?</Text>
                 <TouchableOpacity
-                onPress={() => props.navigation.navigate('SignUp')}
+                  onPress={() => props.navigation.navigate('Login')}
                 >
-                  <Text style={authStyles.signupLink}  >SIGN UP</Text>
+                  <Text style={authStyles.signupLink}>LOG IN</Text>
                 </TouchableOpacity>
               </View>
 
@@ -138,4 +158,4 @@ const LoginPage = (props) => {
   );
 };
 
-export default LoginPage;
+export default SignUpPage;

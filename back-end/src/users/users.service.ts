@@ -23,7 +23,7 @@ export class UsersService {
      return this.userRepository.findOne({where:{email}})
     }
     //Methode de recherche de user par mail et password
-    findByEmailAndPassword(email:string,password:string){
+   async findByEmailAndPassword(email:string,password:string){
         return this.userRepository.findOne({where:{email,password}})
     }
 }

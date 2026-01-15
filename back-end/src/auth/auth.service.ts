@@ -8,6 +8,7 @@ import { Commerceant } from 'src/commerceants/entities/commerceant.entity';
 import { CommerceantsService } from 'src/commerceants/commerceants.service';
 import { Livreur } from 'src/livreur/entity/livreur';
 import { LivreurService } from 'src/livreur/livreur.service';
+import { AuthResponseDTO } from './dto/authResponseDTO';
 
 
 @Injectable()
@@ -17,14 +18,13 @@ export class AuthService {
                 
                 private readonly sellersService: CommerceantsService,
                 private readonly couriersService: LivreurService,
+                private readonly usersService: UsersService,
                  ) {};
-    login(email: string,password: string) {
-     
-        if(email !== 'login@gmail.com' || password !== 'Password123@') {
-            
-            console.log('User authenticated');
-            return null;
-        }
+    async login(email: string,password: string) {     
+       //on fait appel au back pour verifier les infos de connexion
+        const user = await this.usersService.findByEmailAndPassword(email,password);
+        console.log(user);
+        if(!user) return null;
        
         const payload = { 
             email: email, 
@@ -32,16 +32,19 @@ export class AuthService {
         };    
         const acces_token = this.jwtAccessService.sign(payload);
         const refresh_token = this.jwtRefreshService.sign(payload);
-        const reponse = {
-            message : 'success',
-            access_token: acces_token,
-            refresh_token: refresh_token,
-        }
-        console.log(acces_token)
-        console.log(refresh_token)
-        return reponse;
+        const response = new AuthResponseDTO();
+        response.accessToken = acces_token;
+        response.refreshToken = refresh_token;
+        response.userId = user.id;
+        response.userEmail = user.email;
+        response.userRole = user.role;
+        response.userFirstName = user.prenom;
+        response.userLastName = user.nom;
+        response.userProfileImage = user.profileImage || null;
+        
+        return response;
     }
-signup(user:CreateUserDto) {
+    async signup(user:CreateUserDto) {
     let newUser = new User();
     
     if(!user) return null;
@@ -52,14 +55,16 @@ signup(user:CreateUserDto) {
     newUser.adresse = user.adresse;
     newUser.telephone = user.telephone;
     if(user.role == 'seller') {
+        newUser.role = 'seller';
        const newSeller = new Commerceant();
        newSeller.user = newUser;     
-       return this.sellersService.create(newSeller);
+       return await this.sellersService.create(newSeller);
     }
     if(user.role == 'courier') {
+        newUser.role = 'courier';
         const newCourier = new Livreur();
         newCourier.user = newUser;
-        return this.couriersService.create(newCourier);
+        return await this.couriersService.create(newCourier);
     }
     
 
