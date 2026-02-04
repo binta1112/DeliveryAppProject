@@ -24,9 +24,9 @@ import { LivreurController } from './livreur/livreur.controller';
     TypeOrmModule.forRoot({
       type: 'postgres',
       host: 'localhost',
-      port: 5433,
+      port: 5432,
       username: 'postgres',
-      password: 'posgres',//'1234',
+      password: '1234',//'1234',
       database: 'delivery_app',
       autoLoadEntities: true, //charge toutes les entités automatiquement
       synchronize: true,      //en dev seulement! génère le schéma auto
