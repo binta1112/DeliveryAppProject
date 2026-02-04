@@ -1,7 +1,9 @@
-import { IsNotEmpty, IsString } from 'class-validator';
+import { IsNotEmpty, IsString, IsUUID } from 'class-validator';
 
 export class CreateClientDto {
-  sellerId: number;
+  @IsUUID()
+  commerceantId: string;
+
   @IsString()
   @IsNotEmpty()
   nom: string;
@@ -17,4 +19,8 @@ export class CreateClientDto {
   @IsString()
   @IsNotEmpty()
   tel: string;
+
+  @IsString()
+  @IsNotEmpty()
+  ville: string;
 }

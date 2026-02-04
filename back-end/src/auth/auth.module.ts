@@ -14,10 +14,10 @@ import { CommerceantsModule } from 'src/commerceants/commerceants.module';
   imports: [
     ConfigModule,
     JwtModule.register({
-      secret: process.env.JWT_ACCESS_SECRET || 'myAccessSecretKey',
+      secret: process.env.JWT_ACCESS_SECRET || 'mySecretKey',
       signOptions: { expiresIn: '15m' },
-    }),    
-    PassportModule.register({ defaultStrategy: 'jwt' }),
+    }),
+    PassportModule,
     UsersModule,
     LivreurModule,
     CommerceantsModule
@@ -31,7 +31,7 @@ import { CommerceantsModule } from 'src/commerceants/commerceants.module';
       provide: 'JWT_ACCESS_SERVICE',
       useFactory: (configService: ConfigService) => {
         return new JwtService({
-          secret: configService.get('JWT_ACCESS_SECRET') || 'myAccessSecretKey',
+          secret: configService.get('JWT_ACCESS_SECRET') || 'mySecretKey',
           signOptions: { expiresIn: configService.get('JWT_ACCESS_EXPIRES_IN') || '15m' },
         });
       },
@@ -41,7 +41,7 @@ import { CommerceantsModule } from 'src/commerceants/commerceants.module';
       provide: 'JWT_REFRESH_SERVICE',
       useFactory: (configService: ConfigService) => {
         return new JwtService({
-          secret: configService.get('JWT_REFRESH_SECRET') || 'myRefreshSecretKey',
+          secret: configService.get('JWT_REFRESH_SECRET') || 'mySecretKey',
           signOptions: { expiresIn: configService.get('JWT_REFRESH_EXPIRES_IN') || '7d' },
         });
       },

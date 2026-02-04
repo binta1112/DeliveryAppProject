@@ -1,8 +1,10 @@
 import { api } from '../api/client';
 
 export const clientsService = {
-  async list() {
-    const { data } = await api.get('/clients');
+  async list(commerceantId) {
+    const { data } = await api.get('/clients', {
+      params: { commerceantId },
+    });
     return data;
   },
   async get(id) {

@@ -1,9 +1,11 @@
-import { Body,Controller,Delete,Get,Param,Patch,Post,Query} from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Query, UseGuards } from '@nestjs/common';
 import { CommandesService } from './commandes.service';
 import { CreateCommandeDto } from './dto/create-commande.dto';
 import { UpdateCommandeDto } from './dto/update-commande.dto';
 import { FilterCommandesDto } from './dto/filter-commandes.dto';
+import { JwtAuthGuard } from 'src/auth/jwt/jwt-auth.guard';
 
+@UseGuards(JwtAuthGuard)
 @Controller('commandes')
 export class CommandesController {
   constructor(private readonly commandesService: CommandesService) {}

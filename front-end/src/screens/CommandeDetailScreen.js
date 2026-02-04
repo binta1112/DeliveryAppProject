@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { View, Text, ActivityIndicator, StyleSheet, TextInput } from 'react-native';
 import { commandesService } from '../services/commandes.service';
 import Card from '../components/Card';
@@ -7,6 +7,8 @@ import Header from '../components/Header';
 import { colors, spacing, radii } from '../styles/theme';
 import PrimaryButton from '../components/PrimaryButton';
 import { CommandeStatus } from '../types/commande';
+import { useAppDispatch } from '../hooks/useAppDispatch';
+import { createDemandeLivraison } from '../redux/slices/demandesLivraison.slice';
 
 const CommandeDetailScreen = ({ route }) => {
   const { id } = route.params;
@@ -14,6 +16,8 @@ const CommandeDetailScreen = ({ route }) => {
   const [loading, setLoading] = useState(false);
   const [note, setNote] = useState('');
   const [statut, setStatut] = useState(CommandeStatus.PENDING);
+
+  const dispatch = useAppDispatch();
 
   const load = async () => {
     setLoading(true);
@@ -32,6 +36,10 @@ const CommandeDetailScreen = ({ route }) => {
     await commandesService.update(id, { details: note, statut });
     await load();
   };
+
+  const createDemande = useCallback(() => {
+    dispatch(createDemandeLivraison({ commandeId: id }));
+  }, [dispatch, id]);
 
   if (loading || !data) return <ActivityIndicator />;
 
@@ -72,6 +80,7 @@ const CommandeDetailScreen = ({ route }) => {
         />
 
         <PrimaryButton title="Sauvegarder" onPress={save} style={{ marginTop: spacing(3) }} />
+        <PrimaryButton title="Créer demande livraison" onPress={createDemande} style={{ marginTop: spacing(2) }} />
       </Card>
     </View>
   );

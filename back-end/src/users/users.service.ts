@@ -26,4 +26,8 @@ export class UsersService {
    async findByEmailAndPassword(email:string,password:string){
         return this.userRepository.findOne({where:{email,password}})
     }
+
+    async findById(id: number) {
+        return this.userRepository.findOne({ where: { id } });
+}
 }

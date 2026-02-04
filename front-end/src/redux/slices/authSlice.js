@@ -1,38 +1,40 @@
-import {createSlice} from '@reduxjs/toolkit';
-import {authThunk} from '../thunks/authThunk';
+import { createSlice } from '@reduxjs/toolkit';
+
 const initialState = {
-    isLoggedIn: false,
+  isLoggedIn: false,
+  role: null,
+  userId: null,
+  commerceantId: null,
+  livreurId: null,
+  firstTime: false,
 };
 
 const authSlice = createSlice({
-    name: 'auth',
-    initialState,
-    reducers: {
-        login(state) {
-            state.isLoggedIn = true;
-            console.log('**********User logged in, state updated.');
-        },
-        loginFailed(state) {
-            state.isLoggedIn = false;
-        },
-        logout(state) {
-            state.isLoggedIn = false;
-        }
+  name: 'auth',
+  initialState,
+  reducers: {
+    setAuthUser(state, action) {
+      const { role, userId, commerceantId, livreurId, firstTime = false } = action.payload || {};
+      state.isLoggedIn = true;
+      state.role = role || null;
+      state.userId = userId || null;
+      state.commerceantId = commerceantId || null;
+      state.livreurId = livreurId || null;
+      state.firstTime = !!firstTime;
     },
-    
-    extraReducers: (builder) => {
-        builder.addCase(authThunk.fulfilled, (state, action) => {
-            state.isLoggedIn = true;
-        });
-        builder.addCase(authThunk.rejected, (state, action) => {
-            state.isLoggedIn = false;
-        });
-        builder.addCase(authThunk.pending, (state, action) => {
-            state.isLoggedIn = false;
-        });
-        
-    }
-})
+    completeFirstTime(state) {
+      state.firstTime = false;
+    },
+    logout(state) {
+      state.isLoggedIn = false;
+      state.role = null;
+      state.userId = null;
+      state.commerceantId = null;
+      state.livreurId = null;
+      state.firstTime = false;
+    },
+  },
+});
 
-export const {login, loginFailed, logout} = authSlice.actions;
+export const { setAuthUser, completeFirstTime, logout } = authSlice.actions;
 export default authSlice.reducer;

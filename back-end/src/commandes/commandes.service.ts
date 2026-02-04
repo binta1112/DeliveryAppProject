@@ -6,6 +6,7 @@ import { CreateCommandeDto } from './dto/create-commande.dto';
 import { UpdateCommandeDto } from './dto/update-commande.dto';
 import { FilterCommandesDto } from './dto/filter-commandes.dto';
 import { Client } from '../clients/entities/client.entity';
+import { Commerceant } from '../commerceants/entities/commerceant.entity';
 import { RappelCommande } from 'src/rappel_commandes/entities/rappel-commande.entity';
 
 @Injectable()
@@ -13,27 +14,36 @@ export class CommandesService {
   constructor(
     @InjectRepository(Commande)
     private readonly commandeRepository: Repository<Commande>,
-   @InjectRepository(RappelCommande)
+    @InjectRepository(Client)
+    private readonly clientRepository: Repository<Client>,
+    @InjectRepository(Commerceant)
+    private readonly commerceantRepository: Repository<Commerceant>,
+    @InjectRepository(RappelCommande)
     private readonly rappelCommandeRepository: Repository<RappelCommande>,
-   /* @InjectRepository(Client)
-    private readonly clientRepository: Repository<Client>,*/
   ) {}
 
   async create(dto: CreateCommandeDto): Promise<Commande> {
-
-    /*const client = await this.clientRepository.findOne({
-      where: { id: dto.clientId  },
+    const client = await this.clientRepository.findOne({
+      where: { id: dto.clientId },
     });
     if (!client) {
       throw new NotFoundException('Client not found');
-    }*/
-   
+    }
+
+    const commerceant = await this.commerceantRepository.findOne({
+      where: { id: dto.commerceantId },
+    });
+    if (!commerceant) {
+      throw new NotFoundException('Commerceant not found');
+    }
+
     const commande = this.commandeRepository.create({
       addressLivraison: dto.addressLivraison,
       dateLivraison: dto.dateLivraison ? new Date(dto.dateLivraison) : null,
       statut: dto.statut || CommandeStatus.PENDING,
-      details: dto.details || null,      
-      //client,
+      details: dto.details || null,
+      client,
+      commerceant,
     });
 
     return this.commandeRepository.save(commande);
@@ -75,9 +85,7 @@ export class CommandesService {
       commande.addressLivraison = dto.addressLivraison;
     }
     if (dto.dateLivraison !== undefined) {
-      commande.dateLivraison = dto.dateLivraison
-        ? new Date(dto.dateLivraison)
-        : null;
+      commande.dateLivraison = dto.dateLivraison ? new Date(dto.dateLivraison) : null;
     }
     if (dto.statut !== undefined) {
       commande.statut = dto.statut;

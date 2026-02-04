@@ -4,12 +4,17 @@ import clientsReducer from './slices/clients.slice';
 import commerceantsReducer from './slices/commerceants.slice';
 import rappelsReducer from './slices/rappels.slice';
 import authReducer from './slices/authSlice';
+import demandesLivraisonReducer from './slices/demandesLivraison.slice';
+import propositionsPrixReducer from './slices/propositionsPrix.slice';
+
 export const store = configureStore({
   reducer: {
     commandes: commandesReducer,
     clients: clientsReducer,
     commerceants: commerceantsReducer,
     rappels: rappelsReducer,
-    auth:authReducer,
+    auth: authReducer,
+    demandesLivraison: demandesLivraisonReducer,
+    propositionsPrix: propositionsPrixReducer,
   },
 });

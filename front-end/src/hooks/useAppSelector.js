@@ -1,2 +1,3 @@
-import { useSelector } from 'react-redux';
-export const useAppSelector = useSelector;
+import { useSelector, shallowEqual } from 'react-redux';
+
+export const useAppSelector = (selector) => useSelector(selector, shallowEqual);

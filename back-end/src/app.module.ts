@@ -7,17 +7,18 @@ import { ClientsModule } from './clients/clients.module';
 import { RappelCommandesModule } from './rappel_commandes/rappel_commandes.module';
 import { UsersModule } from './users/users.module';
 import { CommerceantsModule } from './commerceants/commerceants.module';
-import { Commande } from './commandes/entities/commande.entity'
+import { Commande } from './commandes/entities/commande.entity';
 import { RappelCommande } from './rappel_commandes/entities/rappel-commande.entity';
 import { Client } from './clients/entities/client.entity';
 import { Commerceant } from './commerceants/entities/commerceant.entity';
-
 import { User } from './users/entity/user.entity';
 import { AuthModule } from './auth/auth.module';
 import { LivreurModule } from './livreur/livreur.module';
 import { Livreur } from './livreur/entity/livreur';
-import { LivreurController } from './livreur/livreur.controller';
-
+import { DemandesLivraisonModule } from './demandes_livraison/demandes_livraison.module';
+import { PropositionsPrixModule } from './propositions_prix/propositions_prix.module';
+import { DemandeLivraison } from './demandes_livraison/entities/demande-livraison.entity';
+import { PropositionPrix } from './propositions_prix/entities/proposition-prix.entity';
 
 @Module({
   imports: [
@@ -26,19 +27,30 @@ import { LivreurController } from './livreur/livreur.controller';
       host: 'localhost',
       port: 5432,
       username: 'postgres',
-      password: '1234',//'1234',
+      password: '1234',
       database: 'delivery_app',
-      autoLoadEntities: true, //charge toutes les entités automatiquement
-      synchronize: true,      //en dev seulement! génère le schéma auto
-      entities: [User, Livreur,Client,Commande,RappelCommande,Commerceant],
+      autoLoadEntities: true,
+      synchronize: true,
+      entities: [
+        User,
+        Livreur,
+        Client,
+        Commande,
+        RappelCommande,
+        Commerceant,
+        DemandeLivraison,
+        PropositionPrix,
+      ],
     }),
-    UsersModule,   
+    UsersModule,
     LivreurModule,
     AuthModule,
     ClientsModule,
     CommandesModule,
     RappelCommandesModule,
     CommerceantsModule,
+    DemandesLivraisonModule,
+    PropositionsPrixModule,
   ],
   controllers: [AppController],
   providers: [AppService],
