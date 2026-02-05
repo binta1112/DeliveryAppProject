@@ -25,9 +25,9 @@ import { PropositionPrix } from './propositions_prix/entities/proposition-prix.e
     TypeOrmModule.forRoot({
       type: 'postgres',
       host: 'localhost',
-      port: 5432,
+      port: 5433,
       username: 'postgres',
-      password: '1234',
+      password: 'posgres',
       database: 'delivery_app',
       autoLoadEntities: true,
       synchronize: true,
