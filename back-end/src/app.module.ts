@@ -19,7 +19,7 @@ import { DemandesLivraisonModule } from './demandes_livraison/demandes_livraison
 import { PropositionsPrixModule } from './propositions_prix/propositions_prix.module';
 import { DemandeLivraison } from './demandes_livraison/entities/demande-livraison.entity';
 import { PropositionPrix } from './propositions_prix/entities/proposition-prix.entity';
-
+import { TrackingModule } from './tracking/tracking.module';
 @Module({
   imports: [
     TypeOrmModule.forRoot({
@@ -51,6 +51,7 @@ import { PropositionPrix } from './propositions_prix/entities/proposition-prix.e
     CommerceantsModule,
     DemandesLivraisonModule,
     PropositionsPrixModule,
+    TrackingModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -8,7 +8,7 @@ import { CommerceantsService } from 'src/commerceants/commerceants.service';
 import { Livreur } from 'src/livreur/entity/livreur';
 import { LivreurService } from 'src/livreur/livreur.service';
 import { AuthResponseDTO } from './dto/authResponseDTO';
-
+import * as bcrypt from 'bcrypt';
 @Injectable()
 export class AuthService {
   constructor(
@@ -20,8 +20,11 @@ export class AuthService {
   ) {}
 
   async login(email: string, password: string) {
-    const user = await this.usersService.findByEmailAndPassword(email, password);
+    const user = await this.usersService.findByEmail(email);
     if (!user) return null;
+
+    const isPasswordValid = await this.comparePassword(password, user.password);
+    if (!isPasswordValid) return null;
 
     const payload = { email: user.email, sub: user.id, role: user.role };
     const acces_token = this.jwtAccessService.sign(payload);
@@ -54,7 +57,7 @@ export class AuthService {
     if (!user) return null;
 
     newUser.email = user.email;
-    newUser.password = user.password;
+    newUser.password = await this.hashPassword(user.password);
     newUser.nom = user.nom;
     newUser.prenom = user.prenom;
     newUser.adresse = user.adresse;
@@ -74,4 +77,11 @@ export class AuthService {
     }
     return null;
   }
+  async  hashPassword(password: string): Promise<string> {
+  const saltRounds = 10;
+  return await bcrypt.hash(password, saltRounds);
+} 
+async  comparePassword(plainPassword: string, hashedPassword: string): Promise<boolean> {
+  return await bcrypt.compare(plainPassword, hashedPassword);
+}
 }

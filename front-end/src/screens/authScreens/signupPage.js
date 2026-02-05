@@ -30,10 +30,10 @@ const SignUpPage = (props) => {
 
   const handleSubmit = async () => {   
 
-   // const validation = validationService.validateRegisterForm(fullName, email, password, passwordConfirmation);
-    //setValidationErrors(validation.errors);
+    const validation = validationService.validateRegisterForm(fullName, email, password, passwordConfirmation);
+    setValidationErrors(validation.errors);
 
-   // if (!validation.isValid) return;
+   if (!validation.isValid) return;
     if (!acceptTerms) {
       Alert.alert('Error', 'You must accept the Terms & Conditions');
       return;

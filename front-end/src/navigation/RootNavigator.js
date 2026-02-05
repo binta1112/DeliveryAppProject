@@ -21,7 +21,16 @@ export default function RootNavigator() {
     <Suspense fallback={<ScreenLoader />}>
       <Stack.Navigator screenOptions={{ headerShown: false }} initialRouteName={initialRoute}>
         {!isLoggedIn ? (
-          <Stack.Screen name="Auth" component={AuthStack} />
+          <>
+            <Stack.Screen name="Auth" component={AuthStack} />
+            {firstTime &&  <Stack.Screen name="Login">
+               {
+                (props) => {
+                    return <LoginPage {...props} />
+                }
+               }
+            </Stack.Screen>}
+          </>
         ) : (
           <>
             {firstTime && <Stack.Screen name="FirstTime" component={FirstTimeScreen} />}

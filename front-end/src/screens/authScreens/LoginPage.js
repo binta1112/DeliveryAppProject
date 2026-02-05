@@ -24,13 +24,14 @@ const LoginPage = (props) => {
   const [rememberMe, setRememberMe] = useState(false);
   const [validationErrors, setValidationErrors] = useState({});
 
-  const { Login, Register, isloading } = useAuth();
+  const { Login,  isloading } = useAuth();
+  
 
   const handleSubmit = async () => {   
-   // const validation = validationService.validateLoginForm(email, password);
-    //setValidationErrors(validation.errors);
-
-   // if (!validation.isValid) return;
+    const validation = validationService.validateLoginForm(email, password);
+    setValidationErrors(validation.errors);
+  
+   if (!validation.isValid) return;
     console.log('Submitting login form with:', { email, password, rememberMe });
     
     try {
@@ -73,7 +74,10 @@ const LoginPage = (props) => {
                 type="email"
                 placeholder="example@gmail.com"
                 value={email}
-                onChange={setEmail}
+                onChange= {(text) => {setEmail(text);
+                 const emailValidation = validationService.validateEmail(email);
+                 setValidationErrors((prev) => ({ ...prev,email: emailValidation == false ? null : 'Invalid email address' }));
+                }}
                 error={validationErrors.email}
               />
 
@@ -82,7 +86,10 @@ const LoginPage = (props) => {
                 type="password"
                 placeholder="••••••••••"
                 value={password}
-                onChange={setPassword}
+                onChange= {(text) => {setPassword(text);
+                 const pwdValidation = validationService.validatePassword(password);
+                 setValidationErrors((prev) => ({ ...prev,password: pwdValidation == false ? null : 'Password must be at least 8 characters, include uppercase, lowercase, and a number' }));
+                }}
                 error={validationErrors.password}
               />
               

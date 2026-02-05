@@ -5,7 +5,7 @@ import { authStyles } from '../../styles/authStyles';
 const InputField = ({ label, type, placeholder, value, onChange, error }) => {
   const [showPassword, setShowPassword] = useState(false);
   const secureTextEntry = type === 'password' && !showPassword;
-
+  console.log('InputField rendered with value:', value, 'and error:', error);
   return (
     <View style={authStyles.inputContainer}>
       <Text style={authStyles.label}>{label}</Text>
