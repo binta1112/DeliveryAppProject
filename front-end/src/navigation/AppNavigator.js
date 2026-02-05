@@ -1,9 +1,9 @@
-
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import CommandesListScreen from '../screens/CommandesListScreen';
 import CommandeDetailScreen from '../screens/CommandeDetailScreen';
 import ClientsListScreen from '../screens/ClientsListScreen';
 import RappelsPendingScreen from '../screens/RappelsPendingScreen';
+import ClientDetailScreen from '../screens/ClientDetailScreen';
 import { TouchableOpacity, Text } from 'react-native';
 import { colors } from '../styles/theme';
 
@@ -24,35 +24,34 @@ const NavActions = ({ navigation }) => (
 );
 
 export const AppNavigator = () => (
-  
-    <Stack.Navigator>
-      <Stack.Screen
-        name="Commandes"
-        component={CommandesListScreen}
-        options={({ navigation }) => ({
-          headerRight: () => <NavActions navigation={navigation} />,
-          title: 'Commandes',
-        })}
-      />
-      <Stack.Screen name="CommandeDetail" component={CommandeDetailScreen} options={{ title: 'Détail' }} />
-      <Stack.Screen
-        name="Clients"
-        component={ClientsListScreen}
-        options={({ navigation }) => ({
-          headerRight: () => <NavActions navigation={navigation} />,
-          title: 'Clients',
-        })}
-      />
-      <Stack.Screen
-        name="RappelsPending"
-        component={RappelsPendingScreen}
-        options={({ navigation }) => ({
-          headerRight: () => <NavActions navigation={navigation} />,
-          title: 'Rappels',
-        })}
-      />
-    </Stack.Navigator>
- 
+  <Stack.Navigator>
+    <Stack.Screen
+      name="Commandes"
+      component={CommandesListScreen}
+      options={({ navigation }) => ({
+        headerRight: () => <NavActions navigation={navigation} />,
+        title: 'Commandes',
+      })}
+    />
+    <Stack.Screen name="CommandeDetail" component={CommandeDetailScreen} options={{ title: 'Détail' }} />
+    <Stack.Screen
+      name="Clients"
+      component={ClientsListScreen}
+      options={({ navigation }) => ({
+        headerRight: () => <NavActions navigation={navigation} />,
+        title: 'Clients',
+      })}
+    />
+    <Stack.Screen name="ClientDetail" component={ClientDetailScreen} options={{ title: 'Client' }} />
+    <Stack.Screen
+      name="RappelsPending"
+      component={RappelsPendingScreen}
+      options={({ navigation }) => ({
+        headerRight: () => <NavActions navigation={navigation} />,
+        title: 'Rappels',
+      })}
+    />
+  </Stack.Navigator>
 );
 
 export default AppNavigator;

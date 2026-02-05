@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { propositionsPrixService } from '../../services/propositions-prix.service';
 
-const initialState = { byDemande: {}, loading: false, error: null };
+const initialState = { byDemande: {}, byLivreur: [], loading: false, error: null };
 
 export const fetchPropositionsByDemande = createAsyncThunk(
   'propositionsPrix/fetchByDemande',
@@ -9,6 +9,11 @@ export const fetchPropositionsByDemande = createAsyncThunk(
     const data = await propositionsPrixService.listByDemande(demandeId);
     return { demandeId, data };
   }
+);
+
+export const fetchPropositionsByLivreur = createAsyncThunk(
+  'propositionsPrix/fetchByLivreur',
+  async (livreurId) => propositionsPrixService.listByLivreur(livreurId)
 );
 
 export const createPropositionPrix = createAsyncThunk(
@@ -28,6 +33,9 @@ const propositionsPrixSlice = createSlice({
         s.byDemande[a.payload.demandeId] = a.payload.data;
       })
       .addCase(fetchPropositionsByDemande.rejected, (s, a) => { s.loading = false; s.error = a.error.message; })
+      .addCase(fetchPropositionsByLivreur.fulfilled, (s, a) => {
+        s.byLivreur = a.payload;
+      })
       .addCase(createPropositionPrix.fulfilled, (s, a) => {
         const demandeId = a.payload.demandeLivraison?.id;
         if (demandeId) {

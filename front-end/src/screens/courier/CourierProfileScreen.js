@@ -7,6 +7,7 @@ import { logout } from '../../redux/slices/authSlice';
 import { useAppSelector } from '../../hooks/useAppSelector';
 import Avatar from '../../components/ui/Avatar';
 import CardPro from '../../components/ui/CardPro';
+import StorageService from '../../services/storageService';
 import { colors, gradients, spacing, typography, radii, shadows } from '../../styles/theme';
 
 const MenuOption = ({ icon, label, onPress, danger }) => (
@@ -26,15 +27,18 @@ export default function CourierProfileScreen() {
   const { livreurId } = useAppSelector((s) => s.auth);
 
   const handleLogout = useCallback(() => {
-    Alert.alert('Déconnexion', 'Êtes-vous sûr de vouloir vous déconnecter ?', [
-      { text: 'Annuler', style: 'cancel' },
-      {
-        text: 'Déconnecter',
-        style: 'destructive',
-        onPress: () => dispatch(logout()),
+  Alert.alert('Déconnexion', 'Êtes-vous sûr de vouloir vous déconnecter ?', [
+    { text: 'Annuler', style: 'cancel' },
+    {
+      text: 'Déconnecter',
+      style: 'destructive',
+      onPress: async () => {
+        await StorageService.clearTokens();
+        dispatch(logout());
       },
-    ]);
-  }, [dispatch]);
+    },
+  ]);
+}, [dispatch]);
 
   return (
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>

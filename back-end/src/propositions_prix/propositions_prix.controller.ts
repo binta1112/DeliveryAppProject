@@ -17,4 +17,10 @@ export class PropositionsPrixController {
   findByDemande(@Query('demandeId') demandeId: string) {
     return this.service.findByDemande(demandeId);
   }
+
+  // ✅ nouveau endpoint
+  @Get('by-livreur')
+  findByLivreur(@Query('livreurId') livreurId: number) {
+    return this.service.findByLivreur(livreurId);
+  }
 }

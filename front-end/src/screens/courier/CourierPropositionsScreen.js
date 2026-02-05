@@ -2,17 +2,28 @@ import React, { useMemo } from 'react';
 import { View, FlatList, StyleSheet, Text } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
+import { useFocusEffect } from '@react-navigation/native';
 import { useAppSelector } from '../../hooks/useAppSelector';
+import { useAppDispatch } from '../../hooks/useAppDispatch';
+import { fetchPropositionsByLivreur } from '../../redux/slices/propositionsPrix.slice';
 import CardPro from '../../components/ui/CardPro';
 import StatusBadge from '../../components/ui/StatusBadge';
 import { colors, gradients, spacing, typography, radii } from '../../styles/theme';
 
 export default function CourierPropositionsScreen() {
-  const { byDemande } = useAppSelector((s) => s.propositionsPrix);
+  const dispatch = useAppDispatch();
+  const livreurId = useAppSelector((s) => s.auth.livreurId);
+  const { byLivreur } = useAppSelector((s) => s.propositionsPrix);
 
-  const allPropositions = useMemo(() => {
-    return Object.values(byDemande).flat();
-  }, [byDemande]);
+  useFocusEffect(
+    React.useCallback(() => {
+      if (livreurId) {
+        dispatch(fetchPropositionsByLivreur(livreurId));
+      }
+    }, [dispatch, livreurId])
+  );
+
+  const allPropositions = useMemo(() => byLivreur || [], [byLivreur]);
 
   const stats = useMemo(() => {
     const accepted = allPropositions.filter((p) => p.statut === 'ACCEPTED').length;
@@ -61,12 +72,10 @@ export default function CourierPropositionsScreen() {
 
   return (
     <View style={styles.container}>
-      {/* Header */}
       <LinearGradient colors={gradients.primary} style={styles.headerGradient}>
         <Text style={styles.headerTitle}>Mes propositions</Text>
         <Text style={styles.headerSubtitle}>Historique de vos offres</Text>
 
-        {/* Stats Row */}
         <View style={styles.statsRow}>
           <View style={styles.statItem}>
             <Text style={styles.statValue}>{stats.total}</Text>
@@ -90,7 +99,6 @@ export default function CourierPropositionsScreen() {
         </View>
       </LinearGradient>
 
-      {/* List */}
       <FlatList
         data={allPropositions}
         keyExtractor={(item) => item.id}

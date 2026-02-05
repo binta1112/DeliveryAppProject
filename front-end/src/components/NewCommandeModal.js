@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Modal, View, Text, StyleSheet, TextInput, TouchableOpacity, ScrollView, Alert } from 'react-native';
-import { Picker } from '@react-native-picker/picker';
+import { Modal, View, Text, StyleSheet, TextInput, TouchableOpacity, ScrollView, Alert, FlatList, Platform } from 'react-native';
+import DateTimePicker from '@react-native-community/datetimepicker';
+import { Ionicons } from '@expo/vector-icons';
 import PrimaryButton from './PrimaryButton';
 import { colors, spacing, radii } from '../styles/theme';
 import { useAppDispatch } from '../hooks/useAppDispatch';
@@ -13,15 +14,30 @@ const NewCommandeModal = ({ visible, onClose, onSubmit }) => {
   const commerceantId = useAppSelector((s) => s.auth.commerceantId);
 
   const [clientId, setClientId] = useState('');
+  const [clientLabel, setClientLabel] = useState('');
   const [addressLivraison, setAddressLivraison] = useState('');
   const [details, setDetails] = useState('');
-  const [loading, setLoading] = useState(false);
+  const [showClientPicker, setShowClientPicker] = useState(false);
+
+  const [dateLivraison, setDateLivraison] = useState(null);
+  const [showDatePicker, setShowDatePicker] = useState(false);
 
   useEffect(() => {
     if (visible && commerceantId) {
       dispatch(fetchClients({ commerceantId }));
     }
   }, [visible, commerceantId, dispatch]);
+
+  const handleSelectClient = (client) => {
+    setClientId(client.id);
+    setClientLabel(`${client.nom} ${client.prenom}`);
+    setShowClientPicker(false);
+  };
+
+  const handleDateChange = (event, selectedDate) => {
+    setShowDatePicker(false);
+    if (selectedDate) setDateLivraison(selectedDate);
+  };
 
   const handleSubmit = async () => {
     if (!clientId) {
@@ -32,16 +48,12 @@ const NewCommandeModal = ({ visible, onClose, onSubmit }) => {
       Alert.alert('Erreur', 'Veuillez entrer une adresse de livraison');
       return;
     }
-
-    setLoading(true);
-    try {
-      await onSubmit({ clientId, addressLivraison, details });
-      setClientId('');
-      setAddressLivraison('');
-      setDetails('');
-    } finally {
-      setLoading(false);
-    }
+    await onSubmit({
+      clientId,
+      addressLivraison,
+      details,
+      dateLivraison: dateLivraison ? dateLivraison.toISOString() : null,
+    });
   };
 
   return (
@@ -51,15 +63,35 @@ const NewCommandeModal = ({ visible, onClose, onSubmit }) => {
           <View style={styles.card}>
             <Text style={styles.title}>Nouvelle commande</Text>
 
+            {/* Client selector */}
             <Text style={styles.label}>Client</Text>
-            <View style={styles.pickerWrapper}>
-              <Picker selectedValue={clientId} onValueChange={setClientId} style={styles.picker}>
-                <Picker.Item label="-- Sélectionnez un client --" value="" />
-                {clients.map((c) => (
-                  <Picker.Item key={c.id} label={`${c.nom} ${c.prenom}`} value={c.id} />
-                ))}
-              </Picker>
+            <TouchableOpacity style={styles.selectInput} onPress={() => setShowClientPicker(true)}>
+              <Text style={clientLabel ? styles.selectText : styles.selectPlaceholder}>
+                {clientLabel || 'Sélectionnez un client'}
+              </Text>
+              <Ionicons name="chevron-down" size={20} color={colors.textMuted} />
+            </TouchableOpacity>
+
+            {/* Date de livraison */}
+            <Text style={styles.label}>Date de livraison</Text>
+            <TouchableOpacity style={styles.selectInput} onPress={() => setShowDatePicker(true)}>
+              <Text style={dateLivraison ? styles.selectText : styles.selectPlaceholder}>
+                {dateLivraison ? dateLivraison.toLocaleString('fr-FR') : 'Choisir une date'}
+              </Text>
+              <Ionicons name="calendar" size={20} color={colors.textMuted} />
+            </TouchableOpacity>
+
+            {showDatePicker && (
+            <View style={styles.datePickerContainer}>
+              <DateTimePicker
+                value={dateLivraison || new Date()}
+                mode="datetime"
+                display={Platform.OS === 'ios' ? 'spinner' : 'default'}
+                onChange={handleDateChange}
+                textColor={colors.text}
+              />
             </View>
+          )}
 
             <TextInput
               style={styles.input}
@@ -79,17 +111,40 @@ const NewCommandeModal = ({ visible, onClose, onSubmit }) => {
               onChangeText={setDetails}
             />
 
-            <PrimaryButton
-              title={loading ? 'Création...' : 'Créer'}
-              onPress={handleSubmit}
-              disabled={loading}
-              style={{ marginTop: spacing(2) }}
-            />
+            <PrimaryButton title="Créer" onPress={handleSubmit} style={{ marginTop: spacing(2) }} />
             <TouchableOpacity onPress={onClose} style={styles.cancel}>
               <Text style={{ color: colors.textMuted, fontWeight: '700' }}>Annuler</Text>
             </TouchableOpacity>
           </View>
         </ScrollView>
+
+        {/* Client picker modal */}
+        <Modal visible={showClientPicker} transparent animationType="fade">
+          <View style={styles.pickerBackdrop}>
+            <View style={styles.pickerCard}>
+              <Text style={styles.pickerTitle}>Choisir un client</Text>
+
+              {clients.length === 0 ? (
+                <Text style={styles.emptyText}>Aucun client trouvé</Text>
+              ) : (
+                <FlatList
+                  data={clients}
+                  keyExtractor={(item) => item.id}
+                  renderItem={({ item }) => (
+                    <TouchableOpacity style={styles.clientRow} onPress={() => handleSelectClient(item)}>
+                      <Text style={styles.clientName}>{item.nom} {item.prenom}</Text>
+                      <Text style={styles.clientPhone}>{item.tel}</Text>
+                    </TouchableOpacity>
+                  )}
+                />
+              )}
+
+              <TouchableOpacity onPress={() => setShowClientPicker(false)} style={styles.closeBtn}>
+                <Text style={styles.closeBtnText}>Fermer</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </Modal>
       </View>
     </Modal>
   );
@@ -100,14 +155,28 @@ const styles = StyleSheet.create({
   card: { backgroundColor: '#FFF', borderRadius: radii.lg, padding: spacing(4) },
   title: { fontSize: 18, fontWeight: '800', marginBottom: spacing(2), color: colors.text },
   label: { marginTop: spacing(2), fontWeight: '600', color: colors.text },
-  pickerWrapper: {
+
+  selectInput: {
     borderWidth: 1,
     borderColor: colors.border,
     borderRadius: radii.md,
+    padding: spacing(3),
     marginTop: spacing(1),
     backgroundColor: '#FAFAFA',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
   },
-  picker: { height: 50, color: colors.text },
+  selectText: { color: colors.text, fontSize: 16 },
+  selectPlaceholder: { color: colors.placeholder, fontSize: 16 },
+
+  datePickerContainer: {
+  backgroundColor: '#F5F5F5',
+  borderRadius: radii.md,
+  marginTop: spacing(2),
+  paddingVertical: spacing(1),
+  },
+
   input: {
     borderWidth: 1,
     borderColor: colors.border,
@@ -120,6 +189,16 @@ const styles = StyleSheet.create({
   },
   textarea: { height: 90, textAlignVertical: 'top' },
   cancel: { marginTop: spacing(2), alignSelf: 'center' },
+
+  pickerBackdrop: { flex: 1, backgroundColor: '#0008', justifyContent: 'center', padding: spacing(4) },
+  pickerCard: { backgroundColor: '#FFF', borderRadius: radii.lg, padding: spacing(4), maxHeight: '70%' },
+  pickerTitle: { fontSize: 18, fontWeight: '700', marginBottom: spacing(3) },
+  clientRow: { paddingVertical: spacing(3), borderBottomWidth: 1, borderBottomColor: colors.borderLight },
+  clientName: { fontSize: 16, fontWeight: '600', color: colors.text },
+  clientPhone: { fontSize: 12, color: colors.textMuted },
+  emptyText: { textAlign: 'center', color: colors.textMuted, marginTop: spacing(2) },
+  closeBtn: { marginTop: spacing(3), alignSelf: 'center' },
+  closeBtnText: { color: colors.primary, fontWeight: '700' },
 });
 
 export default NewCommandeModal;
