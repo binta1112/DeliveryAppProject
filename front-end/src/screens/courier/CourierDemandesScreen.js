@@ -10,7 +10,7 @@ import CardPro from '../../components/ui/CardPro';
 import Avatar from '../../components/ui/Avatar';
 import StatusBadge from '../../components/ui/StatusBadge';
 import GradientButton from '../../components/ui/GradientButton';
-import { colors, gradients, spacing, typography, radii, shadows } from '../../styles/theme';
+import { colors, gradients, spacing, typography, radii } from '../../styles/theme';
 
 const villes = ['Toutes', 'Casablanca', 'Rabat', 'Marrakech', 'Fès', 'Tanger'];
 
@@ -92,8 +92,18 @@ export default function CourierDemandesScreen() {
             <View style={styles.cardDetails}>
               <View style={styles.detailItem}>
                 <Ionicons name="navigate-outline" size={16} color={colors.textMuted} />
-                <Text style={styles.detailText}>{item.adresseLivraison || item.commande?.addressLivraison}</Text>
+                <Text style={styles.detailText}>
+                  {item.adresseLivraison || item.commande?.addressLivraison}
+                </Text>
               </View>
+
+              <View style={styles.detailItem}>
+                <Ionicons name="call-outline" size={16} color={colors.textMuted} />
+                <Text style={styles.detailText}>
+                  {item.commande?.client?.tel}
+                </Text>
+              </View>
+
               {item.dateLivraison && (
                 <View style={styles.detailItem}>
                   <Ionicons name="calendar-outline" size={16} color={colors.textMuted} />
@@ -139,7 +149,6 @@ export default function CourierDemandesScreen() {
 
   return (
     <View style={styles.container}>
-      {/* Header Gradient */}
       <LinearGradient colors={gradients.primary} style={styles.headerGradient}>
         <View style={styles.headerContent}>
           <Text style={styles.headerTitle}>Demandes disponibles</Text>
@@ -147,7 +156,6 @@ export default function CourierDemandesScreen() {
         </View>
       </LinearGradient>
 
-      {/* Filters */}
       <View style={styles.filtersContainer}>
         <FlatList
           horizontal
@@ -165,7 +173,6 @@ export default function CourierDemandesScreen() {
         />
       </View>
 
-      {/* List */}
       <FlatList
         data={filtered}
         keyExtractor={(i) => i.id}

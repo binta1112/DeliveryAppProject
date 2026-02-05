@@ -1,7 +1,8 @@
-import React, { useEffect, useCallback, useState } from 'react';
-import { View, FlatList, StyleSheet, Text, Alert } from 'react-native';
+import React, { useCallback, useState } from 'react';
+import { View, FlatList, StyleSheet, Text, Alert, TouchableOpacity } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { useAppDispatch } from '../hooks/useAppDispatch';
 import { useAppSelector } from '../hooks/useAppSelector';
 import { fetchClients, createClient } from '../redux/slices/clients.slice';
@@ -12,13 +13,18 @@ import { colors, gradients, spacing, typography, radii } from '../styles/theme';
 
 const ClientsListScreen = () => {
   const dispatch = useAppDispatch();
-  const { items, loading } = useAppSelector((s) => s.clients);
+  const navigation = useNavigation();
+  const { items } = useAppSelector((s) => s.clients);
   const commerceantId = useAppSelector((s) => s.auth.commerceantId);
   const [showModal, setShowModal] = useState(false);
 
-  useEffect(() => {
-    dispatch(fetchClients());
-  }, [dispatch]);
+  useFocusEffect(
+    useCallback(() => {
+      if (commerceantId) {
+        dispatch(fetchClients({ commerceantId }));
+      }
+    }, [dispatch, commerceantId])
+  );
 
   const handleCreate = useCallback(
     async (payload) => {
@@ -32,35 +38,34 @@ const ClientsListScreen = () => {
       if (createClient.fulfilled.match(result)) {
         setShowModal(false);
         Alert.alert('Succès', 'Client créé avec succès');
+        dispatch(fetchClients({ commerceantId }));
       } else {
-        throw new Error(result.error?.message || 'Erreur lors de la création');
+        Alert.alert('Erreur', 'Impossible de créer le client');
       }
     },
     [dispatch, commerceantId]
   );
 
-  const renderItem = useCallback(({ item }) => <ClientCard item={item} />, []);
-
   return (
     <View style={styles.container}>
-      {/* Header */}
       <LinearGradient colors={gradients.primary} style={styles.headerGradient}>
         <Text style={styles.headerTitle}>Mes clients</Text>
         <Text style={styles.headerSubtitle}>{items.length} clients enregistrés</Text>
       </LinearGradient>
 
-      {/* List */}
       <FlatList
         data={items}
         keyExtractor={(c) => c.id}
         contentContainerStyle={styles.listContent}
-        showsVerticalScrollIndicator={false}
-        renderItem={renderItem}
+        renderItem={({ item }) => (
+          <TouchableOpacity onPress={() => navigation.navigate('ClientDetail', { client: item })} activeOpacity={0.9}>
+            <ClientCard item={item} />
+          </TouchableOpacity>
+        )}
         ListEmptyComponent={
           <View style={styles.emptyContainer}>
             <Ionicons name="people-outline" size={64} color={colors.textMuted} />
             <Text style={styles.emptyTitle}>Aucun client</Text>
-            <Text style={styles.emptySubtitle}>Ajoutez votre premier client avec le bouton +</Text>
           </View>
         }
       />
@@ -85,7 +90,6 @@ const styles = StyleSheet.create({
   listContent: { padding: spacing(5) },
   emptyContainer: { alignItems: 'center', paddingVertical: spacing(15) },
   emptyTitle: { ...typography.h4, color: colors.text, marginTop: spacing(4) },
-  emptySubtitle: { ...typography.small, color: colors.textMuted, marginTop: spacing(2), textAlign: 'center' },
 });
 
 export default ClientsListScreen;

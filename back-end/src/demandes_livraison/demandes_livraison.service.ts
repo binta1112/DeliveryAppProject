@@ -47,11 +47,11 @@ export class DemandesLivraisonService {
     const query = this.demandeRepo
       .createQueryBuilder('demande')
       .leftJoinAndSelect('demande.commande', 'commande')
+      .leftJoinAndSelect('commande.client', 'client')
       .leftJoinAndSelect('demande.commerceant', 'commerceant')
       .where('demande.statut = :statut', { statut: filter.statut || DemandeLivraisonStatus.OPEN })
       .orderBy('demande.createdAt', 'DESC');
-    
-    // si commerceantId fourni → on filtre (seller)
+
     if (filter.commerceantId) {
       query.andWhere('commerceant.id = :commerceantId', { commerceantId: filter.commerceantId });
     }
@@ -59,11 +59,13 @@ export class DemandesLivraisonService {
     if (filter.ville) {
       query.andWhere('demande.ville ILIKE :ville', { ville: `%${filter.ville}%` });
     }
+
     if (filter.dateLivraisonFrom) {
       query.andWhere('demande.dateLivraison >= :from', {
         from: new Date(filter.dateLivraisonFrom),
       });
     }
+
     if (filter.dateLivraisonTo) {
       query.andWhere('demande.dateLivraison <= :to', {
         to: new Date(filter.dateLivraisonTo),
@@ -74,13 +76,23 @@ export class DemandesLivraisonService {
   }
 
   async findOne(id: string): Promise<DemandeLivraison> {
-    const demande = await this.demandeRepo.findOne({
-      where: { id },
-      relations: ['commande', 'propositions', 'acceptedProposal'],
-    });
-    if (!demande) throw new NotFoundException('Demande not found');
-    return demande;
-  }
+  const demande = await this.demandeRepo.findOne({
+    where: { id },
+    relations: [
+      'commande',
+      'commande.client',
+      'propositions',
+      'propositions.livreur',
+      'propositions.livreur.user',
+      'acceptedProposal',
+      'acceptedProposal.livreur',
+      'acceptedProposal.livreur.user',
+    ],
+  });
+
+  if (!demande) throw new NotFoundException('Demande not found');
+  return demande;
+}
 
   async close(id: string): Promise<DemandeLivraison> {
     const demande = await this.findOne(id);

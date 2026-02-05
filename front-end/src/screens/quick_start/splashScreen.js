@@ -1,21 +1,28 @@
 import { useEffect, useRef } from 'react';
 import { View, StyleSheet, Image, Animated } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function SplashScreen(props) {
   const loading = useRef(new Animated.Value(0)).current;
+
   const startAnimation = async () => {
     Animated.timing(loading, {
       toValue: 1,
       duration: 3000,
       useNativeDriver: false,
-    }).start(() => {
-      props.navigation.replace('Onboarding');
+    }).start(async () => {
+      const seen = await AsyncStorage.getItem('hasSeenOnboarding');
+      if (seen === 'true') {
+        props.navigation.replace('Login');
+      } else {
+        props.navigation.replace('Onboarding');
+      }
     });
   };
+
   useEffect(() => {
     startAnimation();
   }, []);
-
 
   return (
     <View style={styles.container}>
@@ -27,7 +34,7 @@ export default function SplashScreen(props) {
               styles.ray,
               {
                 transform: [{ rotate: `${i * 6.5}deg` }],
-                opacity: 0.1 + (i * 0.04),
+                opacity: 0.1 + i * 0.04,
                 transformOrigin: 'left center',
               },
             ]}
@@ -36,25 +43,25 @@ export default function SplashScreen(props) {
       </View>
 
       <View style={styles.logoContainer}>
-      <Image
-        source={require('../../../assets/image_welcome_pg1.png')}
-        style={{ width: 300, height: 300, resizeMode: 'contain' }}
-      />
-      <View>
-      <View style={{ width: 300, height: 10, borderRadius: 50, backgroundColor: '#eee', overflow: 'hidden', marginTop: 16 }}>
-        <Animated.View
-          style={{
-            width: loading.interpolate({
-              inputRange: [0, 1],
-              outputRange: [0, 300],
-            }),
-            height: 10,
-            borderRadius: 50,
-            backgroundColor: '#FF6B35',
-          }}
+        <Image
+          source={require('../../../assets/image_welcome_pg1.png')}
+          style={{ width: 300, height: 300, resizeMode: 'contain' }}
         />
-      </View>
-      </View>
+        <View>
+          <View style={{ width: 300, height: 10, borderRadius: 50, backgroundColor: '#eee', overflow: 'hidden', marginTop: 16 }}>
+            <Animated.View
+              style={{
+                width: loading.interpolate({
+                  inputRange: [0, 1],
+                  outputRange: [0, 300],
+                }),
+                height: 10,
+                borderRadius: 50,
+                backgroundColor: '#FF6B35',
+              }}
+            />
+          </View>
+        </View>
       </View>
 
       <View style={styles.decorationBottomRight}>
@@ -65,7 +72,7 @@ export default function SplashScreen(props) {
               styles.ray,
               {
                 transform: [{ rotate: `${i * 6.5}deg` }],
-                opacity: 0.1 + (i * 0.04),
+                opacity: 0.1 + i * 0.04,
                 transformOrigin: 'right center',
               },
             ]}

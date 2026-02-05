@@ -1,5 +1,5 @@
 import React, { useEffect, useCallback, useState } from 'react';
-import { View, FlatList, StyleSheet, Text, TouchableOpacity, Alert } from 'react-native';
+import { View, FlatList, StyleSheet, Text, TouchableOpacity } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { useAppDispatch } from '../../hooks/useAppDispatch';
@@ -8,12 +8,11 @@ import { fetchDemandesLivraison } from '../../redux/slices/demandesLivraison.sli
 import CardPro from '../../components/ui/CardPro';
 import Avatar from '../../components/ui/Avatar';
 import StatusBadge from '../../components/ui/StatusBadge';
-import FAB from '../../components/ui/FAB';
 import { colors, gradients, spacing, typography, radii } from '../../styles/theme';
 
 export default function SellerDemandesScreen({ navigation }) {
   const dispatch = useAppDispatch();
-  const { items, loading } = useAppSelector((s) => s.demandesLivraison);
+  const { items } = useAppSelector((s) => s.demandesLivraison);
   const commerceantId = useAppSelector((s) => s.auth.commerceantId);
 
   const [filter, setFilter] = useState('ALL');
@@ -25,86 +24,92 @@ export default function SellerDemandesScreen({ navigation }) {
   }, [dispatch, commerceantId]);
 
   const filteredItems = React.useMemo(() => {
+    if (!items) return [];
     if (filter === 'ALL') return items;
-    return items.filter((d) => d.statut === filter);
+    return items.filter((d) => d && d.statut === filter);
   }, [items, filter]);
 
   const stats = React.useMemo(() => {
-    const open = items.filter((d) => d.statut === 'OPEN').length;
-    const accepted = items.filter((d) => d.statut === 'ACCEPTED').length;
-    const closed = items.filter((d) => d.statut === 'CLOSED').length;
-    return { total: items.length, open, accepted, closed };
+    const list = items || [];
+    const open = list.filter((d) => d?.statut === 'OPEN').length;
+    const accepted = list.filter((d) => d?.statut === 'ACCEPTED').length;
+    const closed = list.filter((d) => d?.statut === 'CLOSED').length;
+    return { total: list.length, open, accepted, closed };
   }, [items]);
 
   const renderDemandeCard = useCallback(
-    ({ item }) => (
-      <TouchableOpacity
-        onPress={() => navigation.navigate('DemandeDetail', { id: item.id })}
-        activeOpacity={0.9}
-      >
-        <CardPro style={styles.demandeCard} variant="highlighted">
-          <View style={styles.cardHeader}>
-            <View style={styles.cardLeft}>
-              <Avatar name={item.commande?.client?.nom || 'Client'} size={48} />
-              <View style={styles.cardInfo}>
-                <Text style={styles.clientName}>
-                  {item.commande?.client?.nom} {item.commande?.client?.prenom}
-                </Text>
-                <View style={styles.locationRow}>
-                  <Ionicons name="location" size={14} color={colors.primary} />
-                  <Text style={styles.locationText}>{item.ville || 'Non spécifié'}</Text>
+    ({ item }) => {
+      if (!item || !item.id) return null;
+
+      return (
+        <TouchableOpacity
+          onPress={() => navigation.navigate('DemandeDetail', { id: item.id })}
+          activeOpacity={0.9}
+        >
+          <CardPro style={styles.demandeCard} variant="highlighted">
+            <View style={styles.cardHeader}>
+              <View style={styles.cardLeft}>
+                <Avatar name={item.commande?.client?.nom || 'Client'} size={48} />
+                <View style={styles.cardInfo}>
+                  <Text style={styles.clientName}>
+                    {item.commande?.client?.nom} {item.commande?.client?.prenom}
+                  </Text>
+                  <View style={styles.locationRow}>
+                    <Ionicons name="location" size={14} color={colors.primary} />
+                    <Text style={styles.locationText}>{item.ville || 'Non spécifié'}</Text>
+                  </View>
                 </View>
               </View>
-            </View>
-            <StatusBadge status={item.statut} />
-          </View>
-
-          <View style={styles.cardDetails}>
-            <View style={styles.detailItem}>
-              <Ionicons name="navigate-outline" size={16} color={colors.textMuted} />
-              <Text style={styles.detailText} numberOfLines={1}>
-                {item.adresseLivraison || item.commande?.addressLivraison || 'Adresse non spécifiée'}
-              </Text>
+              <StatusBadge status={item.statut} />
             </View>
 
-            {item.dateLivraison && (
+            <View style={styles.cardDetails}>
               <View style={styles.detailItem}>
-                <Ionicons name="calendar-outline" size={16} color={colors.textMuted} />
+                <Ionicons name="navigate-outline" size={16} color={colors.textMuted} />
+                <Text style={styles.detailText} numberOfLines={1}>
+                  {item.adresseLivraison || item.commande?.addressLivraison || 'Adresse non spécifiée'}
+                </Text>
+              </View>
+
+              {item.dateLivraison && (
+                <View style={styles.detailItem}>
+                  <Ionicons name="calendar-outline" size={16} color={colors.textMuted} />
+                  <Text style={styles.detailText}>
+                    {new Date(item.dateLivraison).toLocaleDateString('fr-FR', {
+                      day: 'numeric',
+                      month: 'short',
+                      hour: '2-digit',
+                      minute: '2-digit',
+                    })}
+                  </Text>
+                </View>
+              )}
+
+              <View style={styles.detailItem}>
+                <Ionicons name="pricetags-outline" size={16} color={colors.textMuted} />
                 <Text style={styles.detailText}>
-                  {new Date(item.dateLivraison).toLocaleDateString('fr-FR', {
-                    day: 'numeric',
-                    month: 'short',
-                    hour: '2-digit',
-                    minute: '2-digit',
-                  })}
+                  {item.propositions?.length || 0} proposition(s) reçue(s)
+                </Text>
+              </View>
+            </View>
+
+            {item.acceptedProposal && (
+              <View style={styles.acceptedBanner}>
+                <Ionicons name="checkmark-circle" size={18} color={colors.success} />
+                <Text style={styles.acceptedText}>
+                  Livreur accepté • {item.acceptedProposal.prix} MAD
                 </Text>
               </View>
             )}
 
-            <View style={styles.detailItem}>
-              <Ionicons name="pricetags-outline" size={16} color={colors.textMuted} />
-              <Text style={styles.detailText}>
-                {item.propositions?.length || 0} proposition(s) reçue(s)
-              </Text>
+            <View style={styles.cardFooter}>
+              <Text style={styles.footerText}>Voir les détails</Text>
+              <Ionicons name="chevron-forward" size={18} color={colors.primary} />
             </View>
-          </View>
-
-          {item.acceptedProposal && (
-            <View style={styles.acceptedBanner}>
-              <Ionicons name="checkmark-circle" size={18} color={colors.success} />
-              <Text style={styles.acceptedText}>
-                Livreur accepté • {item.acceptedProposal.prix} MAD
-              </Text>
-            </View>
-          )}
-
-          <View style={styles.cardFooter}>
-            <Text style={styles.footerText}>Voir les détails</Text>
-            <Ionicons name="chevron-forward" size={18} color={colors.primary} />
-          </View>
-        </CardPro>
-      </TouchableOpacity>
-    ),
+          </CardPro>
+        </TouchableOpacity>
+      );
+    },
     [navigation]
   );
 
@@ -119,12 +124,10 @@ export default function SellerDemandesScreen({ navigation }) {
 
   return (
     <View style={styles.container}>
-      {/* Header Gradient */}
       <LinearGradient colors={gradients.primary} style={styles.headerGradient}>
         <Text style={styles.headerTitle}>Demandes de livraison</Text>
         <Text style={styles.headerSubtitle}>Gérez vos demandes et propositions</Text>
 
-        {/* Stats */}
         <View style={styles.statsContainer}>
           <View style={styles.statBox}>
             <Ionicons name="document-text" size={20} color="#FFF" />
@@ -152,7 +155,6 @@ export default function SellerDemandesScreen({ navigation }) {
         </View>
       </LinearGradient>
 
-      {/* Filters */}
       <View style={styles.filtersContainer}>
         <FlatList
           horizontal
@@ -168,10 +170,9 @@ export default function SellerDemandesScreen({ navigation }) {
         />
       </View>
 
-      {/* List */}
       <FlatList
         data={filteredItems}
-        keyExtractor={(item) => item.id}
+        keyExtractor={(item, index) => item?.id || `demande-${index}`}
         contentContainerStyle={styles.listContent}
         showsVerticalScrollIndicator={false}
         renderItem={renderDemandeCard}
@@ -181,9 +182,7 @@ export default function SellerDemandesScreen({ navigation }) {
               <Ionicons name="car-outline" size={48} color={colors.primary} />
             </View>
             <Text style={styles.emptyTitle}>Aucune demande</Text>
-            <Text style={styles.emptySubtitle}>
-              Créez une demande de livraison depuis une commande
-            </Text>
+            <Text style={styles.emptySubtitle}>Créez une demande de livraison depuis une commande</Text>
           </View>
         }
       />

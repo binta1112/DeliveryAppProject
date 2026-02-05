@@ -1,74 +1,78 @@
-
 import {
   View,  
   StyleSheet,
   ScrollView,
   Dimensions,
 } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useNavigation } from '@react-navigation/native';
+import OnboardingSlide from '../../components/OnboardingSlide';
+import useOnboardingNavigation from '../../hooks/useOnboardingNavigation';
 
-  import { useNavigation } from '@react-navigation/native';
-  import OnboardingSlide from '../../components/OnboardingSlide';
-  import useOnboardingNavigation from '../../hooks/useOnboardingNavigation';
+const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
-  const { width: SCREEN_WIDTH } = Dimensions.get('window');
+const onboardingData = [
+  {
+    title: 'Order from choosen chef',
+    description:
+      'Get all your loved foods in one once place, you just place the orer we do the rest',
+    illustration: 'chef',
+  },
+  {
+    title: 'All your favorites',
+    description:
+      'Get all your loved foods in one once place, you just place the orer we do the rest',
+    illustration: 'favorites',
+  },
+  {
+    title: 'Free delivery offers',
+    description:
+      'Get all your loved foods in one once place, you just place the orer we do the rest',
+    illustration: 'delivery',
+  },
+];
 
-  const onboardingData = [
-    {
-      title: 'Order from choosen chef',
-      description:
-        'Get all your loved foods in one once place, you just place the orer we do the rest',
-      illustration: 'chef',
-    },
-    {
-      title: 'All your favorites',
-      description:
-        'Get all your loved foods in one once place, you just place the orer we do the rest',
-      illustration: 'favorites',
-    },
-    {
-      title: 'Free delivery offers',
-      description:
-        'Get all your loved foods in one once place, you just place the orer we do the rest',
-      illustration: 'delivery',
-    },
-  ];
+export default function OnboardingScreen() {
+  const navigation = useNavigation();
+  const {
+    currentIndex,
+    scrollViewRef,
+    handleScroll,
+    handleNext,
+    handleSkip,
+  } = useOnboardingNavigation(onboardingData.length, navigation);
 
-  export default  function OnboardingScreen() {
-    const navigation = useNavigation();
-    const {
-      currentIndex,
-      scrollViewRef,
-      handleScroll,
-      handleNext,
-      handleSkip,
-    } = useOnboardingNavigation(onboardingData.length, navigation);
+  const handleFinish = async () => {
+    await AsyncStorage.setItem('hasSeenOnboarding', 'true');
+    navigation.replace('Login');
+  };
 
-    return (
-      <View style={styles.container}>
-        <ScrollView
-          ref={scrollViewRef}
-          horizontal
-          pagingEnabled
-          showsHorizontalScrollIndicator={false}
-          onScroll={handleScroll}
-          scrollEventThrottle={16}
-        >
-          {onboardingData.map((item, index) => (
-            <View key={index} style={{ width: SCREEN_WIDTH }}>
-              <OnboardingSlide
-                item={item}
-                index={index}
-                currentIndex={currentIndex}
-                total={onboardingData.length}
-                onNext={handleNext}
-                onSkip={handleSkip}
-              />
-            </View>
-          ))}
-        </ScrollView>
-      </View>
-    );
-  }
+  return (
+    <View style={styles.container}>
+      <ScrollView
+        ref={scrollViewRef}
+        horizontal
+        pagingEnabled
+        showsHorizontalScrollIndicator={false}
+        onScroll={handleScroll}
+        scrollEventThrottle={16}
+      >
+        {onboardingData.map((item, index) => (
+          <View key={index} style={{ width: SCREEN_WIDTH }}>
+            <OnboardingSlide
+              item={item}
+              index={index}
+              currentIndex={currentIndex}
+              total={onboardingData.length}
+              onNext={index === onboardingData.length - 1 ? handleFinish : handleNext}
+              onSkip={handleFinish}
+            />
+          </View>
+        ))}
+      </ScrollView>
+    </View>
+  );
+}
 
 
   const styles = StyleSheet.create({

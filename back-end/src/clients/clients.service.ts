@@ -1,10 +1,11 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, ConflictException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Client } from './entities/client.entity';
 import { CreateClientDto } from './dto/create-client.dto';
 import { UpdateClientDto } from './dto/update-client.dto';
 import { Commerceant } from 'src/commerceants/entities/commerceant.entity';
+import { Commande } from 'src/commandes/entities/commande.entity';
 
 @Injectable()
 export class ClientsService {
@@ -13,6 +14,8 @@ export class ClientsService {
     private readonly clientRepo: Repository<Client>,
     @InjectRepository(Commerceant)
     private readonly commerceantRepo: Repository<Commerceant>,
+    @InjectRepository(Commande)
+    private readonly commandeRepo: Repository<Commande>,
   ) {}
 
   async create(dto: CreateClientDto): Promise<Client> {
@@ -53,6 +56,15 @@ export class ClientsService {
 
   async remove(id: string): Promise<void> {
     const entity = await this.findOne(id);
+
+    const commandesCount = await this.commandeRepo.count({
+      where: { client: { id } },
+    });
+
+    if (commandesCount > 0) {
+      throw new ConflictException('Client has commandes');
+    }
+
     await this.clientRepo.remove(entity);
   }
 }
