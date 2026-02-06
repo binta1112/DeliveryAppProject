@@ -94,13 +94,20 @@ const SignUpPage = (props) => {
               />
 
               <InputField
-                label="PASSWORD"
-                type="password"
-                placeholder="••••••••••"
-                value={password}
-                onChange={setPassword}
-                error={validationErrors.password}
-              />
+              label="PASSWORD"
+              type="password"
+              placeholder="••••••••••"
+              value={password}
+              onChange={(text) => {
+                setPassword(text);
+                const pwdValidation = validationService.validatePassword(text);
+                setValidationErrors((prev) => ({
+                  ...prev,
+                  password: pwdValidation ? null : 'Password must be at least 8 characters, include uppercase, lowercase, and a number',
+                }));
+              }}
+              error={validationErrors.password}
+            />
               <InputField
                 label="PASSWORD CONFIRMATION"
                 type="password"

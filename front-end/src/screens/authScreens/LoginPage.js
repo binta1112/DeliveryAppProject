@@ -82,16 +82,20 @@ const LoginPage = (props) => {
               />
 
               <InputField
-                label="PASSWORD"
-                type="password"
-                placeholder="••••••••••"
-                value={password}
-                onChange= {(text) => {setPassword(text);
-                 const pwdValidation = validationService.validatePassword(password);
-                 setValidationErrors((prev) => ({ ...prev,password: pwdValidation == false ? null : 'Password must be at least 8 characters, include uppercase, lowercase, and a number' }));
-                }}
-                error={validationErrors.password}
-              />
+              label="PASSWORD"
+              type="password"
+              placeholder="••••••••••"
+              value={password}
+              onChange={(text) => {
+                setPassword(text);
+                const pwdValidation = validationService.validatePassword(text);
+                setValidationErrors((prev) => ({
+                  ...prev,
+                  password: pwdValidation ? null : 'Password must be at least 8 characters, include uppercase, lowercase, and a number',
+                }));
+              }}
+              error={validationErrors.password}
+            />
               
 
               <View style={authStyles.rememberRow}>

@@ -38,43 +38,37 @@ export default function DeliveryDetailsScreen(props) {
     }
   };
 
-  const completeRegistration = useCallback(async () => {
-    setLoading(true);
-    console.log('Registering courier with:', {
+const completeRegistration = useCallback(async () => {
+  setLoading(true);
+  try {
+    const user = {
       nom: props.route.params?.nom,
       prenom: props.route.params?.prenom,
-      email: props.route.params?.email,});
-    try {
-      const user = {
-        nom: props.route.params?.nom,
-        prenom: props.route.params?.prenom,
-        email: props.route.params?.email,
-        password: props.route.params?.password,
-        role: 'courier',
-        vehicule_type: transportType.toUpperCase(),
-        vehicule_matricule: vehicleRegistration,
-        vehicule_images: vehicleImages,
-      };
-      await Register(user);
+      email: props.route.params?.email,
+      password: props.route.params?.password,
+      role: 'courier',
+      vehicule_type: transportType.toUpperCase(),
+      vehicule_matricule: vehicleRegistration,
+      vehicule_images: vehicleImages,
+    };
 
-      dispatch(setAuthUser({ role: 'courier', firstTime: true, vehicule_type: transportType }));
-      vehicule_type: transportType, 
-       /*rootNav = navigation.getParent();
-      rootNav?.reset({
-        index: 0,
-        routes: [{ name: 'FirstTime' }],
-      });*/
-      props.navigation.navigate('SplashScreen');
-      setLoading(false);
-    } catch (error) {
-      console.log('Erreur', error.message);
-      Alert.alert('Enregistrement échoué. Veuillez réessayer.');
-      props.navigation.navigate('SignUp');
-    } finally {
-      setLoading(false);
-    }
-  }, [Register, dispatch, props.navigation, props.route.params, transportType, vehicleRegistration, vehicleImages]);
+    const response = await Register(user);
 
+    dispatch(setAuthUser({
+      role: 'courier',
+      livreurId: response?.livreur_id || response?.livreurId || response?.id || null,
+      firstTime: true,
+    }));
+
+    props.navigation.navigate('SplashScreen');
+  } catch (error) {
+    Alert.alert('Enregistrement échoué. Veuillez réessayer.');
+    props.navigation.navigate('SignUp');
+  } finally {
+    setLoading(false);
+  }
+}, [Register, dispatch, props.navigation, props.route.params, transportType, vehicleRegistration, vehicleImages]);
+  
   return (
     <View style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContent}>

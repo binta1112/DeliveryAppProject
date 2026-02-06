@@ -29,9 +29,9 @@ import { LivreurVehiculeImage } from './livreur/livreur-vehicule.entity';
     TypeOrmModule.forRoot({
       type: 'postgres',
       host: 'localhost',
-      port: 5433,
+      port: 5432,
       username: 'postgres',
-      password: 'posgres',
+      password: '1234',
       database: 'delivery_app',
       autoLoadEntities: true,
       synchronize: true,

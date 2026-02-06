@@ -1,7 +1,7 @@
 import { io } from 'socket.io-client';
 import StorageService from './storageService';
 
-const SOCKET_URL = 'http://192.168.0.144:3000'; //  l'URL de ton backend 
+const SOCKET_URL = 'http://192.168.1.102:3000'; //  l'URL de ton backend 
 
 let socket = null;
 

@@ -12,47 +12,53 @@ export default function RoleSelectionScreen(props) {
   const { Register } = useAuth();
   const dispatch = useDispatch();
 
-  const handleContinue = useCallback(async () => {
-    if (!selectedRole) return;
+const handleContinue = useCallback(async () => {
+  if (!selectedRole) return;
 
-    const fullName = props.route.params.fullName || '';
-    const parts = fullName.trim().split(/\s+/);
-    const prenom = parts[0] || '';
-    const nom = parts.slice(1).join(' ') || '';
+  const fullName = props.route.params.fullName || '';
+  const parts = fullName.trim().split(/\s+/);
+  const prenom = parts[0] || '';
+  const nom = parts.slice(1).join(' ') || '';
 
-    if (selectedRole === 'courier') {
-      props.navigation.navigate('CourierDetails', {
-        nom,
-        prenom,
-        email: props.route.params.email,
-        password: props.route.params.password,
-        role: 'courier',
-      });
-      return;
-    }
+  if (selectedRole === 'courier') {
+    props.navigation.navigate('CourierDetails', {
+      nom,
+      prenom,
+      email: props.route.params.email,
+      password: props.route.params.password,
+      role: 'courier',
+    });
+    return;
+  }
 
-    setLoading(true);
-    try {
-      const user = {
-        nom,
-        prenom,
-        email: props.route.params.email,
-        password: props.route.params.password,
-        role: 'seller',
-      };
-      await Register(user);
+  setLoading(true);
+  try {
+    const user = {
+      nom,
+      prenom,
+      email: props.route.params.email,
+      password: props.route.params.password,
+      role: 'seller',
+    };
 
-      dispatch(setAuthUser({ role: 'seller', firstTime: true }));
-      
-      const rootNav = props.navigation.getParent();
-      rootNav?.reset({
-        index: 0,
-        routes: [{ name: 'FirstTime' }],
-      });
-    } finally {
-      setLoading(false);
-    }
-  }, [Register, dispatch, props, selectedRole]);
+    const response = await Register(user);
+
+    // ✅ Stocker l'id du commerceant
+    dispatch(setAuthUser({
+      role: 'seller',
+      commerceantId: response?.id || response?.commerceantId || null,
+      firstTime: true,
+    }));
+
+    const rootNav = props.navigation.getParent();
+    rootNav?.reset({
+      index: 0,
+      routes: [{ name: 'FirstTime' }],
+    });
+  } finally {
+    setLoading(false);
+  }
+}, [Register, dispatch, props, selectedRole]);
 
   return (
     <View style={styles.container}>
