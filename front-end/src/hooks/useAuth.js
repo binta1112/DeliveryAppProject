@@ -46,4 +46,4 @@ const useAuth = () => {
   return { Login, Register, isloading };
 };
 
-export default useAuth;
+export default useAuth; 

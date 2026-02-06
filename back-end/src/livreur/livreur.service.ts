@@ -40,7 +40,7 @@ export class LivreurService {
   async findById(id: string): Promise<Livreur | null> { 
     return this.livreurRepository.findOne({
       where: { livreur_id: id },
-      relations: ['user'],
+      relations: ['user', 'vehicleImages'],
     });
   }
 }

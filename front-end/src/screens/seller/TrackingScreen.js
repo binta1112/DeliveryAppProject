@@ -76,7 +76,7 @@ const TrackingScreen = ({ route }) => {
       
 
       {loading ? (
-        <ActivityIndicator size="large" color="#007bff" />
+        <ActivityIndicator size="large" color="#007bff" style={styles.loadingIndicator} />
       ) : driverPosition ? (
         <MapView
           ref={mapRef}
@@ -105,6 +105,11 @@ const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#fff' },
   title: { fontSize: 22, fontWeight: 'bold', margin: 16, textAlign: 'center' },
   map: { flex: 1 },
+  loadingIndicator: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
 });
 
 export default TrackingScreen;

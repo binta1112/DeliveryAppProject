@@ -6,7 +6,7 @@ export const fetchCourierProfile = async (courierId) => {
         console.log("Fetched courier profile:", response.data);
         return response.data;
     } catch (error) {
-        console.error("Error fetching courier profile:", error);
+        console.error("Error fetching courier profile:", error, "courierId:", courierId);
         throw error;
     }
 }

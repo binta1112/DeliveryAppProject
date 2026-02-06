@@ -9,7 +9,7 @@ import Avatar from '../../components/ui/Avatar';
 import CardPro from '../../components/ui/CardPro';
 import StorageService from '../../services/storageService';
 import { colors, gradients, spacing, typography, radii, shadows } from '../../styles/theme';
-
+import { useEffect } from 'react';
 const MenuOption = ({ icon, label, onPress, danger }) => (
   <TouchableOpacity onPress={onPress} activeOpacity={0.8}>
     <CardPro style={styles.menuOption}>

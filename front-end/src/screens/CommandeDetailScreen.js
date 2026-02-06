@@ -105,7 +105,7 @@ const CommandeDetailScreen = (props) => {
             onPress={() => {
               // Naviguer vers le tracking
               if (typeof props.navigation !== 'undefined') {
-                props.navigation.navigate('DetailLivreurScreen', { courierId: data.livreur?.id});
+                props.navigation.navigate('DetailLivreurScreen', { courierId: data.livreur?.livreur_id});
               }
             }}
           />

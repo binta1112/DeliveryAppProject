@@ -11,8 +11,8 @@ export class CouriersController {
     private readonly livreurService: LivreurService
   ) {}
 
-  @Get('/:id')
-  async getCourierProfile( id: string): Promise<LivreurProfileDTO|{}> {
+  @Get(':id')
+  async getCourierProfile( @Param('id') id: string): Promise<LivreurProfileDTO|{}> {    
         const livreur = await this.livreurService.findById(id);
     
     if (!livreur) return {};
@@ -20,12 +20,11 @@ export class CouriersController {
     const profile = new LivreurProfileDTO();
     profile.id = livreur.livreur_id;
     profile.name = livreur.user.nom + ' ' + (livreur.user.prenom || '');
-    profile.phone = livreur.user.telephone || '';
-    profile.vehicleImages = ["https://res.cloudinary.com/dzjv9f0s9/image/upload/v1700000000/vehicle-placeholder.png"];
-    profile.transportType = "Vélo"; // Placeholder, à remplacer par une vraie donnée si disponible
-    profile.vehicleRegistration = "AB-123-CD"; // Placeholder, à remplacer par une vraie donnée si disponible
-
-    
+    profile.phone = livreur.user.telephone || '';   
+    profile.transportType = livreur.vehicule_type.toString();
+    profile.averageRating =  0;   
+    profile.vehicleImages = livreur.vehicleImages ? livreur.vehicleImages.map(img => img.url) : [];
+    profile.vehicleRegistration = livreur.vehicule_matricule || '';
     return profile;
   }
 }
