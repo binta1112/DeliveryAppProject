@@ -24,6 +24,7 @@ import { LivreurLocation } from './livreur-location/livreur-location.entity';
 import { LivreurLocationModule } from './livreur-location/livreur-location.module';
 import { LivreurVehiculeModule } from './livreur-vehicule/livreur-vehicule.module';
 import { LivreurVehiculeImage } from './livreur/livreur-vehicule.entity';
+import { NotificationsModule } from './notifications/notifications.module';
 @Module({
   imports: [
     TypeOrmModule.forRoot({
@@ -61,6 +62,7 @@ import { LivreurVehiculeImage } from './livreur/livreur-vehicule.entity';
     TrackingModule,
     LivreurLocationModule,
     LivreurVehiculeModule,
+    NotificationsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

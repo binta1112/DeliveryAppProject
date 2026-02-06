@@ -28,6 +28,7 @@
       "favicon": "./assets/favicon.png"
     },
     "plugins": [
+      "expo-notifications",
       "expo-secure-store",
       "@react-native-community/datetimepicker"
     ],
@@ -35,6 +36,7 @@
       "eas": {
         "projectId": "22fbfd1d-dbbd-42a5-944b-21e204e9f3c6"
       }
-    }
+    },
+    "owner": "douae_99"
   }
 }

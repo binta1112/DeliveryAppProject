@@ -2,14 +2,17 @@ import React, { memo } from 'react';
 import SellerTabs from './sellerTabs';
 import CourierTabs from './courierTabs';
 import { useAppSelector } from '../hooks/useAppSelector';
+import PushTokenRegistrar from '../components/PushTokenRegistrar';
 
 const AppTabs = () => {
   const role = useAppSelector((s) => s.auth.role);
 
-  if (role === 'courier') {
-    return <CourierTabs />;
-  }
-  return <SellerTabs />; // default seller
+  return (
+    <>
+      <PushTokenRegistrar />
+      {role === 'courier' ? <CourierTabs /> : <SellerTabs />}
+    </>
+  );
 };
 
 export default memo(AppTabs);

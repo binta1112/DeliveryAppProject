@@ -4,9 +4,10 @@ import { Ionicons } from '@expo/vector-icons';
 
 const SellerDashboardScreen = lazy(() => import('../screens/seller/SellerDashboardScreen'));
 const SellerCommandesStack = lazy(() => import('./sellerCommandesStack'));
-const SellerClientsStack = lazy(() => import('./sellerClientsStack'));
+const ClientsListScreen = lazy(() => import('../screens/ClientsListScreen'));
 const SellerDemandesStack = lazy(() => import('./sellerDemandesStack'));
 const SellerProfileScreen = lazy(() => import('../screens/seller/SellerProfileScreen'));
+const NotificationsScreen = lazy(() => import('../screens/NotificationsScreen'));
 
 const Tab = createBottomTabNavigator();
 
@@ -20,6 +21,7 @@ export default function SellerTabs() {
           else if (route.name === 'Commandes') iconName = focused ? 'clipboard' : 'clipboard-outline';
           else if (route.name === 'Clients') iconName = focused ? 'people' : 'people-outline';
           else if (route.name === 'Demandes') iconName = focused ? 'car' : 'car-outline';
+          else if (route.name === 'Notifications') iconName = focused ? 'notifications' : 'notifications-outline';
           else if (route.name === 'Profil') iconName = focused ? 'person' : 'person-outline';
           return <Ionicons name={iconName} size={size} color={color} />;
         },
@@ -29,8 +31,9 @@ export default function SellerTabs() {
     >
       <Tab.Screen name="Dashboard" component={SellerDashboardScreen} />
       <Tab.Screen name="Commandes" component={SellerCommandesStack} options={{ headerShown: false }} />
-      <Tab.Screen name="Clients" component={SellerClientsStack} options={{ headerShown: false }} />
+      <Tab.Screen name="Clients" component={ClientsListScreen} />
       <Tab.Screen name="Demandes" component={SellerDemandesStack} options={{ headerShown: false }} />
+      <Tab.Screen name="Notifications" component={NotificationsScreen} />
       <Tab.Screen name="Profil" component={SellerProfileScreen} />
     </Tab.Navigator>
   );

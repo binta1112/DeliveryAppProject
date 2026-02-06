@@ -82,16 +82,16 @@ const NewCommandeModal = ({ visible, onClose, onSubmit }) => {
             </TouchableOpacity>
 
             {showDatePicker && (
-            <View style={styles.datePickerContainer}>
-              <DateTimePicker
-                value={dateLivraison || new Date()}
-                mode="datetime"
-                display={Platform.OS === 'ios' ? 'spinner' : 'default'}
-                onChange={handleDateChange}
-                textColor={colors.text}
-              />
-            </View>
-          )}
+              <View style={styles.datePickerContainer}>
+                <DateTimePicker
+                  value={dateLivraison || new Date()}
+                  mode={Platform.OS === 'ios' ? 'datetime' : 'date'}
+                  display={Platform.OS === 'ios' ? 'spinner' : 'default'}
+                  onChange={handleDateChange}
+                  textColor={colors.text}
+                />
+              </View>
+            )}
 
             <TextInput
               style={styles.input}
@@ -171,10 +171,10 @@ const styles = StyleSheet.create({
   selectPlaceholder: { color: colors.placeholder, fontSize: 16 },
 
   datePickerContainer: {
-  backgroundColor: '#F5F5F5',
-  borderRadius: radii.md,
-  marginTop: spacing(2),
-  paddingVertical: spacing(1),
+    backgroundColor: '#F5F5F5',
+    borderRadius: radii.md,
+    marginTop: spacing(2),
+    paddingVertical: spacing(1),
   },
 
   input: {
