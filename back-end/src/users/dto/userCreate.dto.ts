@@ -7,4 +7,7 @@ export class CreateUserDto {
     telephone?: string;
     adresse?: string;
     role: 'seller' | 'courier';
+    vehicule_type: 'SCOOTER' | 'CAR' | 'BIKE' | 'VAN';
+    vehicule_matricule: string;
+    vehicule_images?: string[]; // URLs des images du véhicule
 }

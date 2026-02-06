@@ -7,6 +7,6 @@ export class CreatePropositionPrixDto {
   @IsNumber()
   prix: number;
 
-  @IsNumber()
-  livreurId: number;
+  @IsUUID()
+  livreurId: string;
 }

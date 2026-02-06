@@ -30,6 +30,7 @@ export default  function AuthStack() {
             <Stack.Screen 
                 name="SignUp"
                 component={SignUpPage}
+                
             />
             <Stack.Screen
               name="CourierDetails"

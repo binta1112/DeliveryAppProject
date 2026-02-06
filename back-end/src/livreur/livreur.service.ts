@@ -14,18 +14,32 @@ export class LivreurService {
   ) {}
 
   async create(livreur: Partial<Livreur>): Promise<Livreur | null> {
-    if (livreur && livreur.user) {
-      const user = this.userRepository.create(livreur.user);
-      livreur.user = await this.userRepository.save(user);
-      const livreurEntity = this.livreurRepository.create(livreur);
-      return this.livreurRepository.save(livreurEntity);
-    }
-    return null;
+      if (livreur && livreur.user ) {
+        const user = this.userRepository.create(livreur.user);
+        livreur.user = await this.userRepository.save(user);
+        // Transform vehicleImages from array of URLs to array of objects { url }
+        let vehicleImages 
+        if (livreur.vehicleImages && Array.isArray(livreur.vehicleImages)) {
+          vehicleImages = (livreur.vehicleImages as unknown as string[]).map((url: string) => ({ url }));
+        }
+        const livreurEntity = this.livreurRepository.create({
+          ...livreur,
+          ...(vehicleImages ? { vehicleImages } : {}),
+        });
+        return this.livreurRepository.save(livreurEntity);
+      }
+      return null;
   }
 
   async findByUserId(userId: number): Promise<Livreur | null> {
     return this.livreurRepository.findOne({
       where: { user: { id: userId } },
+      relations: ['user'],
+    });
+  }
+  async findById(id: string): Promise<Livreur | null> { 
+    return this.livreurRepository.findOne({
+      where: { livreur_id: id },
       relations: ['user'],
     });
   }

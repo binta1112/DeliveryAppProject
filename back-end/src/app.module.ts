@@ -20,6 +20,10 @@ import { PropositionsPrixModule } from './propositions_prix/propositions_prix.mo
 import { DemandeLivraison } from './demandes_livraison/entities/demande-livraison.entity';
 import { PropositionPrix } from './propositions_prix/entities/proposition-prix.entity';
 import { TrackingModule } from './tracking/tracking.module';
+import { LivreurLocation } from './livreur-location/livreur-location.entity';
+import { LivreurLocationModule } from './livreur-location/livreur-location.module';
+import { LivreurVehiculeModule } from './livreur-vehicule/livreur-vehicule.module';
+import { LivreurVehiculeImage } from './livreur/livreur-vehicule.entity';
 @Module({
   imports: [
     TypeOrmModule.forRoot({
@@ -34,16 +38,19 @@ import { TrackingModule } from './tracking/tracking.module';
       entities: [
         User,
         Livreur,
+        LivreurVehiculeImage,
         Client,
         Commande,
         RappelCommande,
         Commerceant,
         DemandeLivraison,
         PropositionPrix,
+        LivreurLocation,
       ],
     }),
     UsersModule,
     LivreurModule,
+    LivreurVehiculeModule,
     AuthModule,
     ClientsModule,
     CommandesModule,
@@ -52,6 +59,8 @@ import { TrackingModule } from './tracking/tracking.module';
     DemandesLivraisonModule,
     PropositionsPrixModule,
     TrackingModule,
+    LivreurLocationModule,
+    LivreurVehiculeModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -4,15 +4,16 @@ import { Camera, X } from 'lucide-react-native';
 import useAuth from '../../hooks/useAuth';
 import { useDispatch } from 'react-redux';
 import { setAuthUser } from '../../redux/slices/authSlice';
+import * as ImagePicker from 'expo-image-picker';
 
 const TRANSPORT_TYPES = [
-  { id: 'moto', label: 'Moto' },
-  { id: 'voiture', label: 'Voiture' },
-  { id: 'velo', label: 'Vélo' },
-  { id: 'scooter', label: 'Scooter' },
+  { id: 'SCOOTER', label: 'Scooter' },
+  { id: 'CAR', label: 'Voiture' },
+  { id: 'BIKE', label: 'Vélo' },
+  { id: 'VAN', label: 'Van' },
 ];
 
-export default function DeliveryDetailsScreen({ navigation, route }) {
+export default function DeliveryDetailsScreen(props) {
   const { Register } = useAuth();
   const dispatch = useDispatch();
 
@@ -25,31 +26,54 @@ export default function DeliveryDetailsScreen({ navigation, route }) {
     setVehicleImages(vehicleImages.filter((_, i) => i !== index));
   };
 
+  const pickImage = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsMultipleSelection: true,
+      quality: 0.7,
+    });
+    if (!result.canceled) {
+      const uris = result.assets ? result.assets.map(a => a.uri) : [result.uri];
+      setVehicleImages([...vehicleImages, ...uris]);
+    }
+  };
+
   const completeRegistration = useCallback(async () => {
     setLoading(true);
+    console.log('Registering courier with:', {
+      nom: props.route.params?.nom,
+      prenom: props.route.params?.prenom,
+      email: props.route.params?.email,});
     try {
       const user = {
-        nom: route.params?.nom,
-        prenom: route.params?.prenom,
-        email: route.params?.email,
-        password: route.params?.password,
+        nom: props.route.params?.nom,
+        prenom: props.route.params?.prenom,
+        email: props.route.params?.email,
+        password: props.route.params?.password,
         role: 'courier',
+        vehicule_type: transportType.toUpperCase(),
+        vehicule_matricule: vehicleRegistration,
+        vehicule_images: vehicleImages,
       };
       await Register(user);
 
-      dispatch(setAuthUser({ role: 'courier', firstTime: true }));
-      
-      const rootNav = navigation.getParent();
+      dispatch(setAuthUser({ role: 'courier', firstTime: true, vehicule_type: transportType }));
+      vehicule_type: transportType, 
+       /*rootNav = navigation.getParent();
       rootNav?.reset({
         index: 0,
         routes: [{ name: 'FirstTime' }],
-      });
+      });*/
+      props.navigation.navigate('SplashScreen');
+      setLoading(false);
     } catch (error) {
-      Alert.alert('Erreur', error.message);
+      console.log('Erreur', error.message);
+      Alert.alert('Enregistrement échoué. Veuillez réessayer.');
+      props.navigation.navigate('SignUp');
     } finally {
       setLoading(false);
     }
-  }, [Register, dispatch, navigation, route.params]);
+  }, [Register, dispatch, props.navigation, props.route.params, transportType, vehicleRegistration, vehicleImages]);
 
   return (
     <View style={styles.container}>
@@ -87,7 +111,7 @@ export default function DeliveryDetailsScreen({ navigation, route }) {
                 </TouchableOpacity>
               </View>
             ))}
-            <TouchableOpacity style={styles.addImageButton}>
+            <TouchableOpacity style={styles.addImageButton} onPress={pickImage}>
               <Camera size={32} color="#FF9955" />
               <Text style={styles.addImageText}>Ajouter</Text>
             </TouchableOpacity>

@@ -8,7 +8,7 @@ const AuthService = {
     },
     register: async (user:SubscribeData) => {
             const response =  await api.post('auth/signup', user);
-            console.log('Registration response:', response.data);
+            console.log('R************egistration response:', response.data);
             return response.data;
     }
 };

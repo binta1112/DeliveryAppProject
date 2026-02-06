@@ -9,14 +9,14 @@ export default function FirstTimeScreen({ navigation }) {
 
   const handleContinue = useCallback(() => {
     dispatch(completeFirstTime());
-    navigation.replace('Main');
+    navigation.navigate('Login');
   }, [dispatch, navigation]);
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Bienvenue 👋</Text>
+      <Text style={styles.title}>Bienvenue</Text>
       <Text style={styles.text}>
-        On te propose un tour rapide pour démarrer efficacement.
+        Connectez-vous pour commencer
       </Text>
 
       <TouchableOpacity style={styles.btn} onPress={handleContinue}>

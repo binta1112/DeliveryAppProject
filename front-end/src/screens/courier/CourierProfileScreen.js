@@ -23,6 +23,24 @@ const MenuOption = ({ icon, label, onPress, danger }) => (
 );
 
 export default function CourierProfileScreen() {
+  useEffect(() => {
+  (async () => {
+    const s = await connectTrackingSocket();
+    s.on("connect", () => {
+      joinOrderRoom(orderId);
+
+      setInterval(() => {
+        sendDriverLocation({
+          orderId,
+          lat: 33.589,  // fake
+          lng: -7.62,   // fake
+          ts: Date.now(),
+        });
+      }, 2000);
+    });
+  })();
+}, []);
+
   const dispatch = useDispatch();
   const { livreurId } = useAppSelector((s) => s.auth);
 

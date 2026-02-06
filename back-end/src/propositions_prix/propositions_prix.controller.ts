@@ -20,7 +20,7 @@ export class PropositionsPrixController {
 
   // ✅ nouveau endpoint
   @Get('by-livreur')
-  findByLivreur(@Query('livreurId') livreurId: number) {
+  findByLivreur(@Query('livreurId') livreurId: string) {
     return this.service.findByLivreur(livreurId);
   }
 }

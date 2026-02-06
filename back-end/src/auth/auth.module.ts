@@ -9,18 +9,20 @@ import { UsersModule } from '../users/users.module';
 import { Livreur } from 'src/livreur/entity/livreur';
 import { LivreurModule } from 'src/livreur/livreur.module';
 import { CommerceantsModule } from 'src/commerceants/commerceants.module';
+import { LivreurVehiculeModule } from 'src/livreur-vehicule/livreur-vehicule.module';
 
 @Module({
   imports: [
     ConfigModule,
     JwtModule.register({
       secret: process.env.JWT_ACCESS_SECRET || 'mySecretKey',
-      signOptions: { expiresIn: '15m' },
+      signOptions: { expiresIn: '1h' },
     }),
     PassportModule,
     UsersModule,
     LivreurModule,
-    CommerceantsModule
+    CommerceantsModule,
+    LivreurVehiculeModule,
   ],
 
   controllers: [AuthController],
@@ -32,7 +34,7 @@ import { CommerceantsModule } from 'src/commerceants/commerceants.module';
       useFactory: (configService: ConfigService) => {
         return new JwtService({
           secret: configService.get('JWT_ACCESS_SECRET') || 'mySecretKey',
-          signOptions: { expiresIn: configService.get('JWT_ACCESS_EXPIRES_IN') || '15m' },
+          signOptions: { expiresIn: configService.get('JWT_ACCESS_EXPIRES_IN') || '1h' },
         });
       },
       inject: [ConfigService],

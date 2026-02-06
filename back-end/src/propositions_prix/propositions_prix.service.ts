@@ -51,7 +51,7 @@ export class PropositionsPrixService {
   }
 
   // ✅ nouveau : toutes les propositions du livreur + statut
-  async findByLivreur(livreurId: number): Promise<PropositionPrix[]> {
+  async findByLivreur(livreurId: string): Promise<PropositionPrix[]> {
     return this.propositionRepo.find({
       where: { livreur: { livreur_id: livreurId } },
       relations: ['demandeLivraison', 'demandeLivraison.commande', 'demandeLivraison.commande.client'],

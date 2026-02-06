@@ -5,10 +5,11 @@ import { CreateUserDto } from '../users/dto/userCreate.dto';
 import { User } from 'src/users/entity/user.entity';
 import { Commerceant } from 'src/commerceants/entities/commerceant.entity';
 import { CommerceantsService } from 'src/commerceants/commerceants.service';
-import { Livreur } from 'src/livreur/entity/livreur';
+import { Livreur, VehicleType } from 'src/livreur/entity/livreur';
 import { LivreurService } from 'src/livreur/livreur.service';
 import { AuthResponseDTO } from './dto/authResponseDTO';
 import * as bcrypt from 'bcrypt';
+import { LivreurVehiculeService } from 'src/livreur-vehicule/livreur-vehicule.service';
 @Injectable()
 export class AuthService {
   constructor(
@@ -17,6 +18,7 @@ export class AuthService {
     private readonly sellersService: CommerceantsService,
     private readonly couriersService: LivreurService,
     private readonly usersService: UsersService,
+    private readonly livreurVehicleService: LivreurVehiculeService,
   ) {}
 
   async login(email: string, password: string) {
@@ -73,6 +75,11 @@ export class AuthService {
       newUser.role = 'courier';
       const newCourier = new Livreur();
       newCourier.user = newUser;
+      newCourier.vehicule_type = user.vehicule_type as VehicleType;
+      newCourier.vehicule_matricule = user.vehicule_matricule;
+      // Pass only the URLs, let LivreurService handle entity creation
+      newCourier.vehicleImages = (user.vehicule_images || []).map(url => ({ imageUrl: url } as any));
+      console.log('Creating courier with data:', newCourier);
       return await this.couriersService.create(newCourier);
     }
     return null;

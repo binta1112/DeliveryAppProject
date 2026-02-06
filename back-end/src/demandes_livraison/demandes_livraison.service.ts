@@ -127,8 +127,11 @@ export class DemandesLivraisonService {
     demande.statut = DemandeLivraisonStatus.ACCEPTED;
     await this.demandeRepo.save(demande);
 
-    demande.commande.statut = CommandeStatus.IN_PROGRESS;
-    await this.commandeRepo.save(demande.commande);
+    // Assigner le livreur à la commande et passer à IN_PROGRESS
+    const commande = demande.commande;
+    commande.livreur = proposal.livreur;
+    commande.statut = CommandeStatus.IN_PROGRESS;
+    await this.commandeRepo.save(commande);
 
     return demande;
   }

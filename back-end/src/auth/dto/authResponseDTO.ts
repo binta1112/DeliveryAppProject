@@ -8,5 +8,5 @@ export class AuthResponseDTO {
   userEmail: string;
   userProfileImage: string | null;
   commerceantId?: string | null;
-  livreurId?: number | null;
+  livreurId?: string | null;
 }

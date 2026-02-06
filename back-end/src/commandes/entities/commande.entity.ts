@@ -2,7 +2,8 @@ import { Column, CreateDateColumn, Entity, ManyToOne, OneToMany, PrimaryGenerate
 import { Commerceant } from '../../commerceants/entities/commerceant.entity';
 import { Client } from '../../clients/entities/client.entity';
 import { RappelCommande } from '../../rappel_commandes/entities/rappel-commande.entity';
-
+import { Livreur } from '../../livreur/entity/livreur';
+import { LivreurLocation } from 'src/livreur-location/livreur-location.entity';
 export enum CommandeStatus {
   PENDING = 'PENDING',
   IN_PROGRESS = 'IN_PROGRESS',
@@ -42,4 +43,9 @@ export class Commande {
 
   @OneToMany(() => RappelCommande, (reminder) => reminder.commande, { cascade: true })
   rappelCommandes: RappelCommande[];
+
+  @ManyToOne(() => Livreur, { nullable: true, eager: true })
+  livreur: Livreur | null;
+  @OneToMany(() => LivreurLocation, (loc) => loc.commande)
+locations: LivreurLocation[];
 }

@@ -130,26 +130,7 @@ const SignUpPage = (props) => {
                   <Text style={authStyles.signupLink}>LOG IN</Text>
                 </TouchableOpacity>
               </View>
-
-              <Divider text="Or" />
-
-              <View style={authStyles.socialContainer}>
-                <SocialButton
-                  icon="f"
-                  type="facebook"
-                  onPress={() => handleSocialLogin('Facebook')}
-                />
-                <SocialButton
-                  icon="X"
-                  type="twitter"
-                  onPress={() => handleSocialLogin('Twitter')}
-                />
-                <SocialButton
-                  icon=""
-                  type="apple"
-                  onPress={() => handleSocialLogin('Apple')}
-                />
-              </View>
+             
             </View>
           </View>
         </ScrollView>

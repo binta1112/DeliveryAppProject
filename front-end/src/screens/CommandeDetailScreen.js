@@ -10,8 +10,8 @@ import { CommandeStatus } from '../types/commande';
 import { useAppDispatch } from '../hooks/useAppDispatch';
 import { createDemandeLivraison } from '../redux/slices/demandesLivraison.slice';
 
-const CommandeDetailScreen = ({ route }) => {
-  const { id } = route.params;
+const CommandeDetailScreen = (props) => {
+  const { id } = props.route.params;
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [note, setNote] = useState('');
@@ -22,7 +22,7 @@ const CommandeDetailScreen = ({ route }) => {
   const load = async () => {
     setLoading(true);
     const res = await commandesService.get(id);
-    setData(res);
+    setData(res);   
     setNote(res?.details ?? '');
     setStatut(res?.statut ?? CommandeStatus.PENDING);
     setLoading(false);
@@ -56,6 +56,7 @@ const CommandeDetailScreen = ({ route }) => {
 
         <Text style={[styles.label, { marginTop: spacing(3) }]}>Statut</Text>
         <View style={styles.badges}>
+          {/** normalement on ne doit afficher que le statut actuel */}
           {Object.values(CommandeStatus).map((s) => (
             <PrimaryButton
               key={s}
@@ -79,8 +80,37 @@ const CommandeDetailScreen = ({ route }) => {
           placeholder="Notes, rappels internes, consignes…"
         />
 
-        <PrimaryButton title="Sauvegarder" onPress={save} style={{ marginTop: spacing(3) }} />
+        {data.statut === "PENDING" &&
+         <>
+         <PrimaryButton title="Sauvegarder" onPress={save} style={{ marginTop: spacing(3) }} />
         <PrimaryButton title="Créer demande livraison" onPress={createDemande} style={{ marginTop: spacing(2) }} />
+
+         </>
+        }
+        {data.statut === "IN_PROGRESS" && (
+          <>
+          <PrimaryButton
+            title="Tracker le livreur"
+            style={{ marginTop: spacing(2), backgroundColor: colors.primaryDark }}
+            onPress={() => {
+              // Naviguer vers le tracking
+              if (typeof props.navigation !== 'undefined') {
+                props.navigation.navigate('TrackingScreen', { orderId: data.id });
+              }
+            }}
+          />
+          <PrimaryButton
+            title="Détails du livreur"
+            style={{ marginTop: spacing(2), backgroundColor: colors.primaryDark }}
+            onPress={() => {
+              // Naviguer vers le tracking
+              if (typeof props.navigation !== 'undefined') {
+                props.navigation.navigate('DetailLivreurScreen', { courierId: data.livreur?.id});
+              }
+            }}
+          />
+          </>
+        )}
       </Card>
     </View>
   );

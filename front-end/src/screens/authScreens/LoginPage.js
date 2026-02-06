@@ -116,27 +116,7 @@ const LoginPage = (props) => {
                 >
                   <Text style={authStyles.signupLink}  >SIGN UP</Text>
                 </TouchableOpacity>
-              </View>
-
-              <Divider text="Or" />
-
-              <View style={authStyles.socialContainer}>
-                <SocialButton
-                  icon="f"
-                  type="facebook"
-                  onPress={() => handleSocialLogin('Facebook')}
-                />
-                <SocialButton
-                  icon="X"
-                  type="twitter"
-                  onPress={() => handleSocialLogin('Twitter')}
-                />
-                <SocialButton
-                  icon=""
-                  type="apple"
-                  onPress={() => handleSocialLogin('Apple')}
-                />
-              </View>
+              </View>             
             </View>
           </View>
         </ScrollView>
